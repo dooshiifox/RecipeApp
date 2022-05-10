@@ -1,0 +1,44 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "command": "cd ./server && cargo run",
+            "problemMatcher": ["$rustc"],
+            "group": {
+                "isDefault": true,
+                "kind": "build"
+            },
+            "label": "Server: Start for Development"
+        },
+        {
+            "type": "shell",
+            "command": "cd ./server && ./start",
+            "group": "build",
+            "label": "Server: Start for Docker"
+        },
+        {
+            "type": "shell",
+            "command": "cd ./server && cargo test",
+            "problemMatcher": ["$rustc"],
+            "group": {
+                "isDefault": true,
+                "kind": "test"
+            },
+            "label": "Server: Test"
+        },
+        {
+            "type": "shell",
+            "command": "echo 'Please open `/app/lib/main.dart` and run with Flutter VSCode Debugger (Ctrl+F5)'",
+            "group": "build",
+            "label": "App: Start for Development"
+        },
+        {
+            "type": "shell",
+            "command": "cd ./app && flutter test",
+            "problemMatcher": ["$dart-build_runner"],
+            "group": "test",
+            "label": "App: Test"
+        }
+    ]
+}
