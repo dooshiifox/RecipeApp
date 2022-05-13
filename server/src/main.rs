@@ -1,11 +1,6 @@
-use actix_web::{get, web, App, HttpServer, Responder};
-use tracing::{trace};
+use actix_web::{web, App, HttpServer};
 
-#[get("/hello/{name}")]
-async fn greet(name: web::Path<String>) -> impl Responder {
-    trace!("Greet called!");
-    format!("Hello {name}!")
-}
+mod api;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -20,7 +15,10 @@ async fn main() -> std::io::Result<()> {
         println!("Building app!");
         App::new()
             .route("/hello", web::get().to(|| async { "Hello World!" }))
-            .service(greet)
+            .service(
+                web::scope("/api")
+                    .service(api::world::get_world)
+            )
     })
     // Docker requires 0.0.0.0 and i wasted over an hour of my life
     // figuring this out.
