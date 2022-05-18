@@ -1,16 +1,32 @@
 use actix_web::{get, Responder, web};
-use crate::api::apires::*;
-use serde_json::json;
+use serde_json::{Value, json};
+use actix_api_macros::*;
+
+#[derive(ActixApiEnum)]
+enum HelloWorldResponse {
+    #[success(message = "Hello {}!")]
+    HelloWorld(String),
+    #[success(json)]
+    HelloWorldJson(Value),
+    #[failure(message = "Request was not formatted correctly. `{}`")]
+    BadRequest(String),
+    #[failure(message = "Unexpected ID: Expected `{}`, got `{}`", json = true)]
+    UnexpectedId(String, i32, Value),
+    #[failure(message = "Internal Server Error")]
+    #[status_code(500)]
+    InternalServerError,
+}
 
 #[get("/hello/{id}")]
 pub async fn get_world(id: web::Path<i32>) -> impl Responder {
+    use HelloWorldResponse::*;
     let id = id.into_inner();
 
     match id {
-        1 => ApiResult::success("Hello"),
-        2 => ApiResult::success("World"),
-        3 => ApiResult::error_msg("That was a 3. Wrong answer."),
-        4..=8 => ApiResult::error("Seriously?", json!({
+        1 => HelloWorld("Hello".to_string()),
+        2 => HelloWorld("World".to_string()),
+        3 => BadRequest("That was a 3. Wrong answer.".to_string()),
+        4..=8 => HelloWorldJson(json!({
             "provided_id": id,
             "sub3": id - 3,
             "nestTest": {
@@ -26,6 +42,13 @@ pub async fn get_world(id: web::Path<i32>) -> impl Responder {
                 ]
             }
         })),
-        _ => ApiResult::error_msg("Sorry but that number is higher than I can count :(")
+        9.. => UnexpectedId("1..=8".to_string(), id, json!({
+            "provided_id": id,
+            "expected_id": {
+                "min": 1,
+                "max": 8
+            }
+        })),
+        _ => InternalServerError
     }
 }
