@@ -29,18 +29,7 @@ pub async fn get_world(id: web::Path<i32>) -> impl Responder {
         4..=8 => HelloWorldJson(json!({
             "provided_id": id,
             "sub3": id - 3,
-            "nestTest": {
-                "ok": "it works",
-                "butDoArrays": [
-                    "work",
-                    "too",
-                    "?",
-                    {
-                        "doThey?": true,
-                        "woohoo!": null
-                    }
-                ]
-            }
+            "hello": "world!"
         })),
         9.. => UnexpectedId("1..=8".to_string(), id, json!({
             "provided_id": id,
@@ -49,6 +38,7 @@ pub async fn get_world(id: web::Path<i32>) -> impl Responder {
                 "max": 8
             }
         })),
+        // Matches <= 0
         _ => InternalServerError
     }
 }
