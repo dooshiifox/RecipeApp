@@ -1,6 +1,6 @@
-use actix_web::{get, Responder, web};
-use serde_json::{Value, json};
 use actix_api_macros::*;
+use actix_web::{get, web, Responder};
+use serde_json::{json, Value};
 
 #[derive(ActixApiEnum)]
 enum HelloWorldResponse {
@@ -31,14 +31,18 @@ pub async fn get_world(id: web::Path<i32>) -> impl Responder {
             "sub3": id - 3,
             "hello": "world!"
         })),
-        9.. => UnexpectedId("1..=8".to_string(), id, json!({
-            "provided_id": id,
-            "expected_id": {
-                "min": 1,
-                "max": 8
-            }
-        })),
+        9.. => UnexpectedId(
+            "1..=8".to_string(),
+            id,
+            json!({
+                "provided_id": id,
+                "expected_id": {
+                    "min": 1,
+                    "max": 8
+                }
+            }),
+        ),
         // Matches <= 0
-        _ => InternalServerError
+        _ => InternalServerError,
     }
 }

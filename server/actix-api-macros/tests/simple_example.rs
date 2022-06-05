@@ -1,10 +1,10 @@
-#[macro_use] extern crate actix_api_macros;
+#[macro_use]
+extern crate actix_api_macros;
 use serde::Serialize;
-
 #[derive(Serialize)]
 struct Phone {
     home: String,
-    work: String
+    work: String,
 }
 
 #[derive(Serialize)]
@@ -15,6 +15,7 @@ struct User {
 }
 
 #[derive(ActixApiEnum)]
+#[allow(dead_code)]
 enum HelloWorld {
     #[success]
     Hello,
