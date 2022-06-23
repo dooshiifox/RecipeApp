@@ -39,6 +39,18 @@
             "problemMatcher": ["$dart-build_runner"],
             "group": "test",
             "label": "App: Test"
+        },
+        {
+            "type": "shell",
+            "command": "cd ./web && npm run dev",
+            "group": "build",
+            "label": "Web: Start for Development"
+        },
+        {
+            "type": "shell",
+            "command": "cd ./web && npm run test",
+            "group": "test",
+            "label": "Web: Test"
         }
     ]
 }

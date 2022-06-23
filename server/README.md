@@ -1,7 +1,7 @@
 # 2022 Nutriblocks Kids Recipe App - Server
 
 The server code repository for my 2022 NCEA assessment (& scholarship?) project.
-Built for [Nutriblocks](https://nutriblocksnz.business.site/).
+Built for [Nutriblocks](https://nutriblocks.co.nz/).
 
 ## Layout
 
