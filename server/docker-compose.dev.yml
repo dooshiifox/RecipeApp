@@ -1,0 +1,11 @@
+version: "3.9"
+
+services:
+    database-dev:
+        image: mongo:latest
+        container_name: mongo
+        ports:
+            - "27017:27017"
+        env_file:
+            - .env.dev
+        restart: always
