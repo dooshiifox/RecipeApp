@@ -7,7 +7,30 @@ edition = "2021"
 
 [dependencies]
 actix-web= "4.0.1"
-serde = { version = "1.0.137", features = ["derive"] }
 serde_json = "1.0.81"
-tracing = { version = "0.1", features = ["max_level_trace", "release_max_level_warn"] }
-actix-api-macros = { version = "=0.1.0", path = "actix-api-macros" }
+clap = "3.2.6"
+dotenv = "0.15.0"
+mongodb = "2.2.2"
+
+[dependencies.actix-api-macros]
+version = "=0.1.0"
+path = "actix-api-macros"
+
+[dependencies.serde]
+version = "1.0.137"
+features = ["derive"]
+
+[dependencies.tracing]
+version = "0.1"
+features = [
+    "max_level_trace",
+    "release_max_level_warn"
+]
+
+[dependencies.uuid]
+version = "1.1.2"
+features = [
+    "v4",                # Lets you generate random UUIDs
+    "fast-rng",          # Use a faster (but still sufficiently random) RNG
+    "macro-diagnostics", # Enable better diagnostics for compile-time UUIDs
+]
