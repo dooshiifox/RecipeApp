@@ -11,6 +11,8 @@ enum BasicRecipeResponse {
         json
     )]
     InvalidUuid(String),
+    #[failure(message = "The specified UUID was not found.", json)]
+    NotFound(Uuid),
 }
 
 #[get("/recipe-basic/{uuid}")]

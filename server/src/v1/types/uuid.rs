@@ -6,7 +6,7 @@ use std::fmt;
 /// however has several functions that make it easier to use as a `String`.
 ///
 /// [`u128`]: https://doc.rust-lang.org/std/primitive.u128.html
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Default)]
 pub struct Uuid(u128);
 
 impl Uuid {
@@ -116,5 +116,21 @@ impl From<uuid::Uuid> for Uuid {
 impl From<Uuid> for uuid::Uuid {
     fn from(u: Uuid) -> Self {
         uuid::Uuid::from_u128(u.0)
+    }
+}
+
+// Allow conversion to and from BSON
+impl From<mongodb::bson::Bson> for Uuid {
+    fn from(bson: mongodb::bson::Bson) -> Self {
+        match bson {
+            mongodb::bson::Bson::String(s) => Uuid::from_str(&s).unwrap(),
+            _ => panic!("Unexpected BSON type"),
+        }
+    }
+}
+
+impl From<Uuid> for mongodb::bson::Bson {
+    fn from(uuid: Uuid) -> Self {
+        mongodb::bson::Bson::String(uuid.to_string())
     }
 }

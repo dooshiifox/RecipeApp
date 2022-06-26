@@ -1,6 +1,7 @@
 use actix_web::{web, App as ActixApp, HttpServer};
 use clap::{App as ClapApp, Arg};
 
+mod envvar;
 mod v1;
 
 /// Determines the current environment of the project.
@@ -12,18 +13,6 @@ pub enum Environment {
     LocalProd,
     /// The project is running in production mode on a server.
     Prod,
-}
-
-macro_rules! envvar {
-    ($name:ident from $filename:expr) => {
-        dotenv::var(stringify!($name)).map_err(|_| {
-            format!(
-                "Could not find envvar `{}` in file `{}`",
-                stringify!($name),
-                $filename
-            )
-        })
-    };
 }
 
 #[actix_web::main]
@@ -70,6 +59,11 @@ async fn main() -> std::io::Result<()> {
     dotenv::from_filename(env_file)
         .unwrap_or_else(|e| panic!("Failed loading `{}` file: {}", env_file, e));
 
+    // Load the secret key used for various operations from the secret.env file
+    // TODO: Not use a secret-based key to interact with the database!
+    dotenv::from_filename("secret.env")
+        .unwrap_or_else(|e| panic!("Failed loading `secret.env` file: {}", e));
+
     // Get the server port, panicking if not set.
     let port = envvar!(SERVER_PORT from env_file).unwrap();
     let port = port.parse::<u16>().unwrap_or_else(|_| {
@@ -79,6 +73,7 @@ async fn main() -> std::io::Result<()> {
         )
     });
 
+    // Get a connection to the database.
     let client = create_db_client(env_file).await.unwrap();
 
     // Test the connection to the database

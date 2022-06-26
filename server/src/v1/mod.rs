@@ -1,12 +1,14 @@
 use actix_web::Scope;
 
 mod index;
+mod recipe;
 mod recipe_basic;
 mod types;
-
-use index::get;
-use recipe_basic::uuid;
+mod utils;
 
 pub fn init(scope: Scope) -> Scope {
-    scope.service(get).service(uuid)
+    scope
+        .service(index::get)
+        .service(recipe::insert)
+        .service(recipe_basic::uuid)
 }
