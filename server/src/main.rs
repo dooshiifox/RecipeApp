@@ -14,6 +14,18 @@ pub enum Environment {
     Prod,
 }
 
+macro_rules! envvar {
+    ($name:ident from $filename:expr) => {
+        dotenv::var(stringify!($name)).map_err(|_| {
+            format!(
+                "Could not find envvar `{}` in file `{}`",
+                stringify!($name),
+                $filename
+            )
+        })
+    };
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     // Create a command-line parser to get the current environment
@@ -56,11 +68,10 @@ async fn main() -> std::io::Result<()> {
         Environment::Prod => ".env.prod",
     };
     dotenv::from_filename(env_file)
-        .unwrap_or_else(|_| panic!("Could not find `{}` file", env_file));
+        .unwrap_or_else(|e| panic!("Failed loading `{}` file: {}", env_file, e));
 
     // Get the server port, panicking if not set.
-    let port = dotenv::var("SERVER_PORT")
-        .unwrap_or_else(|_| panic!("Could not find envvar `SERVER_PORT` in file `{}`", env_file));
+    let port = envvar!(SERVER_PORT from env_file).unwrap();
     let port = port.parse::<u16>().unwrap_or_else(|_| {
         panic!(
             "Could not parse `SERVER_PORT={}` in file `{}` as a u16",
@@ -68,19 +79,14 @@ async fn main() -> std::io::Result<()> {
         )
     });
 
-    // Create a new MongoDB client
-    let uri = dotenv::var("MONGODB_URI")
-        .unwrap_or_else(|_| panic!("Could not find envvar `MONGODB_URI` in file `{}`", env_file));
-    let client = mongodb::Client::with_uri_str(&uri)
-        .await
-        .unwrap_or_else(|_| panic!("Could not create MongoDB client with URI `{}`", uri));
+    let client = create_db_client(env_file).await.unwrap();
 
     // Test the connection to the database
     client
         .database("admin")
         .run_command(mongodb::bson::doc! {"ping": 1}, None)
         .await
-        .unwrap_or_else(|_| panic!("Could not ping MongoDB with URI `{}`", uri));
+        .expect("Could not ping MongoDB");
     println!("Connected to the database successfully.");
 
     // Start the web server
@@ -97,4 +103,27 @@ async fn main() -> std::io::Result<()> {
     .bind(("0.0.0.0", port))?
     .run()
     .await
+}
+
+async fn create_db_client(env_file: &str) -> Result<mongodb::Client, String> {
+    // Create a new MongoDB client
+    let uri = envvar!(MONGODB_URI from env_file)?;
+
+    // Initialise an options.
+    let mut client_options = mongodb::options::ClientOptions::parse(&uri)
+        .await
+        .map_err(|_| format!("Could not create MongoDB client with URI `{}`", uri))?;
+
+    client_options.app_name = dotenv::var("MONGODB_CONNECTION_APPNAME").ok();
+
+    client_options.credential = Some(
+        mongodb::options::Credential::builder()
+            .username(envvar!(MONGO_INITDB_ROOT_USERNAME from env_file)?)
+            .password(envvar!(MONGO_INITDB_ROOT_PASSWORD from env_file)?)
+            .build(),
+    );
+
+    // Construct a client from those options.
+    let client = mongodb::Client::with_options(client_options);
+    client.map_err(|_| "Could not create MongoDB client".to_string())
 }
