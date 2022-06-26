@@ -1,7 +1,7 @@
 use actix_web::{web, App as ActixApp, HttpServer};
 use clap::{App as ClapApp, Arg};
 
-mod api;
+mod v1;
 
 /// Determines the current environment of the project.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -96,7 +96,7 @@ async fn main() -> std::io::Result<()> {
         ActixApp::new()
             .app_data(web::Data::new(env))
             .app_data(web::Data::new(client.clone()))
-            .service(web::scope("/api").service(api::world::get_world))
+            .service(web::scope("/api").service(v1::init(web::scope("/v1"))))
     })
     // Docker requires 0.0.0.0 and i wasted over an hour of my life
     // figuring this out.
