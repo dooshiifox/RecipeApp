@@ -15,6 +15,4 @@ proc-macro2 = "1.0.38"
 quote = "1.0.18"
 serde_json = "1.0.81"
 syn = { version = "1.0.94", features = ["extra-traits"] }
-
-[dev-dependencies]
 serde = { version = "1.0.137", features = ["derive"] }
