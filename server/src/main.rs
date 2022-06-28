@@ -15,6 +15,57 @@ pub enum Environment {
     Prod,
 }
 
+/// Create the database client connection.
+async fn create_db_client(env_file: &str) -> Result<mongodb::Client, String> {
+    // Create a new MongoDB client
+    let uri = envvar!(MONGODB_URI from env_file)?;
+
+    // Initialise an options.
+    let mut client_options = mongodb::options::ClientOptions::parse(&uri)
+        .await
+        .map_err(|_| format!("Could not create MongoDB client with URI `{}`", uri))?;
+
+    client_options.app_name = dotenv::var("MONGODB_CONNECTION_APPNAME").ok();
+
+    client_options.credential = Some(
+        mongodb::options::Credential::builder()
+            .username(envvar!(MONGO_INITDB_ROOT_USERNAME from env_file)?)
+            .password(envvar!(MONGO_INITDB_ROOT_PASSWORD from env_file)?)
+            .build(),
+    );
+
+    // Construct a client from those options.
+    let client = mongodb::Client::with_options(client_options);
+    client.map_err(|_| "Could not create MongoDB client".to_string())
+}
+
+/// Set the log level of the application using `tracing`.
+pub fn set_log_level(env_file: &str) -> Result<(), String> {
+    let level = envvar!(LOG_LEVEL from env_file)?;
+    let level = level.to_lowercase();
+    let level = match level.as_str() {
+        "trace" => tracing::Level::TRACE,
+        "debug" => tracing::Level::DEBUG,
+        "info" => tracing::Level::INFO,
+        "warn" => tracing::Level::WARN,
+        "error" => tracing::Level::ERROR,
+        _ => return Err(format!("Invalid envvar `LOG_LEVEL` in {}. Expected `TRACE`, `DEBUG`, `INFO`, `WARN`, or `ERROR`", env_file)),
+    };
+
+    // a builder for `FmtSubscriber`.
+    let subscriber = tracing_subscriber::FmtSubscriber::builder()
+        // all spans/events with a level higher than TRACE (e.g, debug, info, warn, etc.)
+        // will be written to stdout.
+        .with_max_level(level)
+        // completes the builder.
+        .finish();
+
+    tracing::subscriber::set_global_default(subscriber)
+        .map_err(|e| format!("Could not set log level: `{}`", e))?;
+
+    Ok(())
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     // Create a command-line parser to get the current environment
@@ -73,6 +124,9 @@ async fn main() -> std::io::Result<()> {
         )
     });
 
+    // Create the tracing subscriber and set the log level for the application.
+    set_log_level(env_file).unwrap();
+
     // Get a connection to the database.
     let client = create_db_client(env_file).await.unwrap();
 
@@ -87,7 +141,6 @@ async fn main() -> std::io::Result<()> {
     // Start the web server
     println!("Starting Actix-web server on http://0.0.0.0:{}", port);
     HttpServer::new(move || {
-        println!("Building app!");
         ActixApp::new()
             .app_data(web::Data::new(env))
             .app_data(web::Data::new(client.clone()))
@@ -98,27 +151,4 @@ async fn main() -> std::io::Result<()> {
     .bind(("0.0.0.0", port))?
     .run()
     .await
-}
-
-async fn create_db_client(env_file: &str) -> Result<mongodb::Client, String> {
-    // Create a new MongoDB client
-    let uri = envvar!(MONGODB_URI from env_file)?;
-
-    // Initialise an options.
-    let mut client_options = mongodb::options::ClientOptions::parse(&uri)
-        .await
-        .map_err(|_| format!("Could not create MongoDB client with URI `{}`", uri))?;
-
-    client_options.app_name = dotenv::var("MONGODB_CONNECTION_APPNAME").ok();
-
-    client_options.credential = Some(
-        mongodb::options::Credential::builder()
-            .username(envvar!(MONGO_INITDB_ROOT_USERNAME from env_file)?)
-            .password(envvar!(MONGO_INITDB_ROOT_PASSWORD from env_file)?)
-            .build(),
-    );
-
-    // Construct a client from those options.
-    let client = mongodb::Client::with_options(client_options);
-    client.map_err(|_| "Could not create MongoDB client".to_string())
 }

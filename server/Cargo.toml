@@ -12,6 +12,8 @@ clap = "3.2.6"
 dotenv = "0.15.0"
 mongodb = "2.2.2"
 chrono = "0.4.19"
+tracing = "0.1"
+tracing-subscriber = "0.3.11"
 
 [dependencies.actix-api-macros]
 version = "=0.1.0"
