@@ -1,5 +1,6 @@
 use crate::v1::types::*;
 
+pub mod get_basic;
 pub mod post;
 
 /// The type of recipe sent in the request body.

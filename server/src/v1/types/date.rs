@@ -1,5 +1,9 @@
 /// A `Date` is a timestamp in milliseconds since the Unix epoch, in UTC.
-#[derive(Debug, serde::Serialize, serde::Deserialize, Clone, PartialEq, Eq)]
+///
+/// The date is in milliseconds.
+#[derive(
+    Debug, serde::Serialize, serde::Deserialize, Copy, Clone, PartialEq, Eq, Ord, PartialOrd,
+)]
 pub struct Date(u64);
 
 impl Date {
@@ -12,6 +16,36 @@ impl Date {
     /// Returns the number of milliseconds since the Unix epoch, in UTC.
     pub fn now() -> Self {
         Date(chrono::offset::Utc::now().timestamp_millis() as u64)
+    }
+}
+
+impl std::ops::Add for Date {
+    type Output = Self;
+
+    fn add(self, other: Self) -> Self {
+        Date(self.0 + other.0)
+    }
+}
+
+impl std::ops::Sub for Date {
+    type Output = Self;
+
+    fn sub(self, other: Self) -> Self {
+        Date(self.0 - other.0)
+    }
+}
+
+// u128 -> Date
+impl From<u128> for Date {
+    fn from(ms: u128) -> Self {
+        Date(ms as u64)
+    }
+}
+
+// u64 -> Date
+impl From<u64> for Date {
+    fn from(ms: u64) -> Self {
+        Date(ms)
     }
 }
 
@@ -36,7 +70,7 @@ impl<Tz: chrono::TimeZone> From<chrono::DateTime<Tz>> for Date {
     }
 }
 
-// Dare -> DateTime<Utc>
+// Date -> DateTime<Utc>
 impl From<Date> for chrono::DateTime<chrono::Utc> {
     fn from(date: Date) -> Self {
         chrono::DateTime::<chrono::Utc>::from_utc(

@@ -1204,6 +1204,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "readonly"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1195d8cd0ebd43f09af81cbfabd0105419337d13baf2b537ee6788f2c63f825d"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "recipe-server"
 version = "0.1.0"
 dependencies = [
@@ -1214,6 +1225,7 @@ dependencies = [
  "dotenv",
  "lazy_static",
  "mongodb",
+ "readonly",
  "serde",
  "serde_json",
  "tracing",

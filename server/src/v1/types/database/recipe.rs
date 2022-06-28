@@ -8,36 +8,37 @@ use crate::v1::types::*;
 /// [`BasicRecipe`]: crate::v1::types::basic_recipe::BasicRecipe
 #[derive(Debug, serde::Serialize, serde::Deserialize, Clone, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
+#[readonly::make]
 pub struct Recipe {
     /// The unique identifier of the recipe
     #[serde(rename = "_id")]
-    uuid: Uuid,
+    pub uuid: Uuid,
     /// The date the recipe was added to the database
-    date_added: Date,
+    pub date_added: Date,
     /// The date the recipe will/went public. If not yet that date, can only be referred to by id
-    becomes_public: Date,
+    pub becomes_public: Date,
     /// The staff who helped make this recipe.
-    authors: Vec<Uuid>,
+    pub authors: Vec<Uuid>,
     /// A short string crediting the creators of the recipe. Max 400 chars.
-    credits: Option<Formattable>,
+    pub credits: Option<Formattable>,
     /// The date the recipe went weekly. None if never was weekly.
-    weekly_timestamp: Option<Date>,
+    pub weekly_timestamp: Option<Date>,
     /// The title of the recipe. Max 80 chars.
-    title: String,
+    pub title: String,
     /// A list of common nutrients found in the recipe. Should be 1-3 long
-    nutrients: Vec<Nutrient>,
+    pub nutrients: Vec<Nutrient>,
     /// The time to cook the recipe, in minutes
-    time_to_cook: u16,
+    pub time_to_cook: u16,
     /// The servings of the recipe.
-    servings: u16,
+    pub servings: u16,
     /// The URL to the recipe image. Should be on S3
-    image: Url,
+    pub image: Url,
     /// The ingredients of the recipe. Max 80chars per ingredient.
-    ingredients: Vec<String>,
+    pub ingredients: Vec<String>,
     /// The recipe's method
-    method: Method,
+    pub method: Method,
     /// The quiz information for the end of the recipe
-    quiz: Quiz,
+    pub quiz: Quiz,
 }
 
 impl Recipe {
@@ -49,6 +50,23 @@ impl Recipe {
     /// Gets the UUID of the recipe
     pub fn uuid(&self) -> &Uuid {
         &self.uuid
+    }
+
+    /// Returns if the recipe is currently weekly or not.
+    ///
+    /// Currently checks if the Recipe has a weekly timestamp and that the
+    /// weekly timestamp was not more than 7 days ago. In the future, this
+    /// should change to check in the database if this is the newest
+    /// valid weekly.
+    pub fn is_weekly(&self) -> bool {
+        if let Some(weekly) = &self.weekly_timestamp {
+            let now = Date::now();
+            // # of ms in 7 days.
+            let week_ms: u64 = 7 * 24 * 60 * 60 * 1000;
+            *weekly <= now && now <= *weekly + week_ms.into()
+        } else {
+            false
+        }
     }
 }
 
