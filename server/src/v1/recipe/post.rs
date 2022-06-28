@@ -1,5 +1,5 @@
 use crate::v1::recipe::RequestRecipe;
-use crate::v1::{types::*, utils};
+use crate::v1::{types::*, utils::*};
 use actix_api_macros::*;
 use actix_web::{post, web, HttpRequest, Responder};
 use mongodb::bson::doc;
@@ -39,7 +39,7 @@ pub async fn insert(
     trace!("Attempting to insert recipe.");
     // Important endpoint. Check for authorization before allowing
     // access to insert data.
-    if utils::check_user_auth(req).is_err() {
+    if check_user_auth(req).is_err() {
         trace!("Invalid authorization attempt.");
         return BasicRecipeResponse::InvalidAuth;
     }
@@ -61,8 +61,7 @@ pub async fn insert(
 
     // Insert into the database.
     let result = client
-        .database("recipe_db")
-        .collection("recipes")
+        .get_collection(Collections::Recipes)
         .insert_one(recipe, None)
         .await;
 
