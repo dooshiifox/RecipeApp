@@ -13,6 +13,7 @@
     Ord,
     PartialOrd,
 )]
+#[readonly::make]
 pub struct Date(u64);
 
 impl Date {
@@ -25,6 +26,11 @@ impl Date {
     /// Returns the number of milliseconds since the Unix epoch, in UTC.
     pub fn now() -> Self {
         Date(chrono::offset::Utc::now().timestamp_millis() as u64)
+    }
+
+    /// Returns the number of milliseconds held in the container.
+    pub fn ms(&self) -> u64 {
+        self.0
     }
 }
 

@@ -18,6 +18,18 @@ pub struct WeeklyRecipeGetter {
 }
 
 impl WeeklyRecipeGetter {
+    /// Returns the current weekly recipe if the cache is valid
+    /// and the recipe is set.
+    ///
+    /// If this return None, a call to [`WeeklyRecipeGetter::get`] should be made.
+    pub fn get_recipe(&self) -> Option<&Recipe> {
+        if self.recipe.is_none() || self.is_cache_expired() {
+            None
+        } else {
+            self.recipe.as_ref()
+        }
+    }
+
     /// Returns the current weekly recipe.
     ///
     /// If the weekly recipe has not been retrieved from the database or the

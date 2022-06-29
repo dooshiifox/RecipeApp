@@ -1,6 +1,7 @@
 use crate::v1::utils::WeeklyRecipeGetter;
 use actix_web::{web, App as ActixApp, HttpServer};
 use clap::{App as ClapApp, Arg};
+use std::sync::{Arc, Mutex};
 
 mod envvar;
 mod v1;
@@ -139,13 +140,16 @@ async fn main() -> std::io::Result<()> {
         .expect("Could not ping MongoDB");
     println!("Connected to the database successfully.");
 
+    let weekly_recipe_getter = WeeklyRecipeGetter::default();
+    let weekly_recipe_getter = Arc::new(Mutex::new(weekly_recipe_getter));
+
     // Start the web server
     println!("Starting Actix-web server on http://0.0.0.0:{}", port);
     HttpServer::new(move || {
         ActixApp::new()
             .app_data(web::Data::new(env))
             .app_data(web::Data::new(client.clone()))
-            .app_data(web::Data::new(WeeklyRecipeGetter::default()))
+            .app_data(web::Data::new(weekly_recipe_getter.clone()))
             .service(web::scope("/api").service(v1::init(web::scope("/v1"))))
     })
     // Docker requires 0.0.0.0 and i wasted over an hour of my life

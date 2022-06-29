@@ -3,6 +3,7 @@ use crate::v1::types::*;
 pub mod get;
 pub mod get_basic;
 pub mod post;
+pub mod weekly;
 
 /// The type of recipe sent in the request body.
 #[derive(Debug, serde::Serialize, serde::Deserialize, Clone, PartialEq, Eq)]
