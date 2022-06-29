@@ -1,3 +1,4 @@
+use crate::v1::utils::WeeklyRecipeGetter;
 use actix_web::{web, App as ActixApp, HttpServer};
 use clap::{App as ClapApp, Arg};
 
@@ -144,6 +145,7 @@ async fn main() -> std::io::Result<()> {
         ActixApp::new()
             .app_data(web::Data::new(env))
             .app_data(web::Data::new(client.clone()))
+            .app_data(web::Data::new(WeeklyRecipeGetter::default()))
             .service(web::scope("/api").service(v1::init(web::scope("/v1"))))
     })
     // Docker requires 0.0.0.0 and i wasted over an hour of my life

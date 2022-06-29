@@ -2,7 +2,16 @@
 ///
 /// The date is in milliseconds.
 #[derive(
-    Debug, serde::Serialize, serde::Deserialize, Copy, Clone, PartialEq, Eq, Ord, PartialOrd,
+    Default,
+    Debug,
+    serde::Serialize,
+    serde::Deserialize,
+    Copy,
+    Clone,
+    PartialEq,
+    Eq,
+    Ord,
+    PartialOrd,
 )]
 pub struct Date(u64);
 
