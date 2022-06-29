@@ -10,4 +10,5 @@ pub fn init(scope: Scope) -> Scope {
         .service(index::get)
         .service(recipe::post::insert)
         .service(recipe::get_basic::uuid)
+        .service(recipe::get::uuid)
 }

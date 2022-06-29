@@ -1,4 +1,5 @@
-use crate::v1::types::database::Recipe;
+use crate::v1::types::database::Method;
+use crate::v1::types::database::Recipe as DatabaseRecipe;
 use crate::v1::types::*;
 
 /// A recipe that contains less information than a standard `Recipe` or
@@ -6,16 +7,16 @@ use crate::v1::types::*;
 /// sent to the client.
 #[derive(serde::Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct BasicRecipe {
+pub struct Recipe {
     /// The unique identifier of the recipe.
     pub uuid: Uuid,
     /// The date the recipe was made public.
     pub date_added: Date,
     /// Whether the recipe is *currently* the weekly recipe.
     pub is_weekly: bool,
-    /// The title of the recipe. Should be max 80 characters.
+    /// The title of the recipe.
     pub title: String,
-    /// The nutrients found in the recipe. Should be 1 - 3 long.
+    /// The nutrients found in the recipe.
     pub nutrients: Vec<SerdeStringNutrient>,
     /// The amount of time, in minutes, to cook the recipe.
     pub time_to_cook: u16,
@@ -23,12 +24,16 @@ pub struct BasicRecipe {
     pub servings: u16,
     /// The URL to the image of the recipe.
     pub image: Url,
+    /// The ingredients of the recipe.
+    pub ingredients: Vec<String>,
+    /// The recipe's method
+    pub method: Method,
 }
 
-impl BasicRecipe {
-    /// Creates a new `BasicRecipe` from a [`database::Recipe`].
-    pub fn from_recipe(recipe: &Recipe) -> Self {
-        BasicRecipe {
+impl Recipe {
+    /// Creates a new `Recipe` from a [`database::Recipe`].
+    pub fn from_recipe(recipe: &DatabaseRecipe) -> Self {
+        Recipe {
             uuid: recipe.uuid,
             date_added: recipe.date_added,
             is_weekly: recipe.is_weekly(),
@@ -39,6 +44,8 @@ impl BasicRecipe {
             time_to_cook: recipe.time_to_cook,
             servings: recipe.servings,
             image: recipe.image.clone(),
+            ingredients: recipe.ingredients.clone(),
+            method: recipe.method.clone(),
         }
     }
 }
