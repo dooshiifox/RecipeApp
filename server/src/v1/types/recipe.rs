@@ -35,7 +35,9 @@ impl Recipe {
     pub fn from_recipe(recipe: &DatabaseRecipe) -> Self {
         Recipe {
             uuid: recipe.uuid,
-            date_added: recipe.date_added,
+            // Return the date it became public instead of the date it
+            // was added to the database
+            date_added: recipe.becomes_public,
             is_weekly: recipe.is_weekly(),
             title: recipe.title.clone(),
             // Convert Nutrient to SerdeStringNutrient so when sent to the
