@@ -1,7 +1,10 @@
+use crate::v1::utils::WeeklyRecipeGetter;
 use actix_web::{web, App as ActixApp, HttpServer};
 use clap::{App as ClapApp, Arg};
+use std::sync::{Arc, Mutex};
 
-mod api;
+mod envvar;
+mod v1;
 
 /// Determines the current environment of the project.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -12,6 +15,57 @@ pub enum Environment {
     LocalProd,
     /// The project is running in production mode on a server.
     Prod,
+}
+
+/// Create the database client connection.
+async fn create_db_client(env_file: &str) -> Result<mongodb::Client, String> {
+    // Create a new MongoDB client
+    let uri = envvar!(MONGODB_URI from env_file)?;
+
+    // Initialise an options.
+    let mut client_options = mongodb::options::ClientOptions::parse(&uri)
+        .await
+        .map_err(|_| format!("Could not create MongoDB client with URI `{}`", uri))?;
+
+    client_options.app_name = dotenv::var("MONGODB_CONNECTION_APPNAME").ok();
+
+    client_options.credential = Some(
+        mongodb::options::Credential::builder()
+            .username(envvar!(MONGO_INITDB_ROOT_USERNAME from env_file)?)
+            .password(envvar!(MONGO_INITDB_ROOT_PASSWORD from env_file)?)
+            .build(),
+    );
+
+    // Construct a client from those options.
+    let client = mongodb::Client::with_options(client_options);
+    client.map_err(|_| "Could not create MongoDB client".to_string())
+}
+
+/// Set the log level of the application using `tracing`.
+pub fn set_log_level(env_file: &str) -> Result<(), String> {
+    let level = envvar!(LOG_LEVEL from env_file)?;
+    let level = level.to_lowercase();
+    let level = match level.as_str() {
+        "trace" => tracing::Level::TRACE,
+        "debug" => tracing::Level::DEBUG,
+        "info" => tracing::Level::INFO,
+        "warn" => tracing::Level::WARN,
+        "error" => tracing::Level::ERROR,
+        _ => return Err(format!("Invalid envvar `LOG_LEVEL` in {}. Expected `TRACE`, `DEBUG`, `INFO`, `WARN`, or `ERROR`", env_file)),
+    };
+
+    // a builder for `FmtSubscriber`.
+    let subscriber = tracing_subscriber::FmtSubscriber::builder()
+        // all spans/events with a level higher than TRACE (e.g, debug, info, warn, etc.)
+        // will be written to stdout.
+        .with_max_level(level)
+        // completes the builder.
+        .finish();
+
+    tracing::subscriber::set_global_default(subscriber)
+        .map_err(|e| format!("Could not set log level: `{}`", e))?;
+
+    Ok(())
 }
 
 #[actix_web::main]
@@ -56,11 +110,15 @@ async fn main() -> std::io::Result<()> {
         Environment::Prod => ".env.prod",
     };
     dotenv::from_filename(env_file)
-        .unwrap_or_else(|_| panic!("Could not find `{}` file", env_file));
+        .unwrap_or_else(|e| panic!("Failed loading `{}` file: {}", env_file, e));
+
+    // Load the secret key used for various operations from the secret.env file
+    // TODO: Not use a secret-based key to interact with the database!
+    dotenv::from_filename("secret.env")
+        .unwrap_or_else(|e| panic!("Failed loading `secret.env` file: {}", e));
 
     // Get the server port, panicking if not set.
-    let port = dotenv::var("SERVER_PORT")
-        .unwrap_or_else(|_| panic!("Could not find envvar `SERVER_PORT` in file `{}`", env_file));
+    let port = envvar!(SERVER_PORT from env_file).unwrap();
     let port = port.parse::<u16>().unwrap_or_else(|_| {
         panic!(
             "Could not parse `SERVER_PORT={}` in file `{}` as a u16",
@@ -68,29 +126,31 @@ async fn main() -> std::io::Result<()> {
         )
     });
 
-    // Create a new MongoDB client
-    let uri = dotenv::var("MONGODB_URI")
-        .unwrap_or_else(|_| panic!("Could not find envvar `MONGODB_URI` in file `{}`", env_file));
-    let client = mongodb::Client::with_uri_str(&uri)
-        .await
-        .unwrap_or_else(|_| panic!("Could not create MongoDB client with URI `{}`", uri));
+    // Create the tracing subscriber and set the log level for the application.
+    set_log_level(env_file).unwrap();
+
+    // Get a connection to the database.
+    let client = create_db_client(env_file).await.unwrap();
 
     // Test the connection to the database
     client
         .database("admin")
         .run_command(mongodb::bson::doc! {"ping": 1}, None)
         .await
-        .unwrap_or_else(|_| panic!("Could not ping MongoDB with URI `{}`", uri));
+        .expect("Could not ping MongoDB");
     println!("Connected to the database successfully.");
+
+    let weekly_recipe_getter = WeeklyRecipeGetter::default();
+    let weekly_recipe_getter = Arc::new(Mutex::new(weekly_recipe_getter));
 
     // Start the web server
     println!("Starting Actix-web server on http://0.0.0.0:{}", port);
     HttpServer::new(move || {
-        println!("Building app!");
         ActixApp::new()
             .app_data(web::Data::new(env))
             .app_data(web::Data::new(client.clone()))
-            .service(web::scope("/api").service(api::world::get_world))
+            .app_data(web::Data::new(weekly_recipe_getter.clone()))
+            .service(web::scope("/api").service(v1::init(web::scope("/v1"))))
     })
     // Docker requires 0.0.0.0 and i wasted over an hour of my life
     // figuring this out.

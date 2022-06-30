@@ -11,6 +11,11 @@ serde_json = "1.0.81"
 clap = "3.2.6"
 dotenv = "0.15.0"
 mongodb = "2.2.2"
+chrono = "0.4.19"
+tracing = "0.1"
+tracing-subscriber = "0.3.11"
+lazy_static = "1.4.0"
+readonly = "0.2.1"
 
 [dependencies.actix-api-macros]
 version = "=0.1.0"
@@ -19,13 +24,6 @@ path = "actix-api-macros"
 [dependencies.serde]
 version = "1.0.137"
 features = ["derive"]
-
-[dependencies.tracing]
-version = "0.1"
-features = [
-    "max_level_trace",
-    "release_max_level_warn"
-]
 
 [dependencies.uuid]
 version = "1.1.2"
