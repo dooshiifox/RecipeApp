@@ -3,7 +3,7 @@
     "tasks": [
         {
             "type": "shell",
-            "command": "cd ./server && cargo run",
+            "command": "cd ./server && cargo watch -x 'run'",
             "problemMatcher": ["$rustc"],
             "group": {
                 "isDefault": true,
