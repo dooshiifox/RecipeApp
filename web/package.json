@@ -16,6 +16,7 @@
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.22.2",
+		"@poppanator/sveltekit-svg": "^0.3.4",
 		"@sveltejs/adapter-auto": "next",
 		"@sveltejs/kit": "next",
 		"@types/cookie": "^0.5.1",
