@@ -40,6 +40,22 @@ function isBlackBackground(node) {
 	)
 		return true;
 
+	// Check `<path d="M0,0h24v24H0V0z" fill="none"/>`
+	if (
+		node.name === 'path' &&
+		node.attributes.d === 'M0,0h24v24H0V0z' &&
+		node.attributes.fill === 'none'
+	)
+		return true;
+
+	// Check `<path d="M0 0h24v24H0z" fill="none"/>`
+	if (
+		node.name === 'path' &&
+		node.attributes.d === 'M0 0h24v24H0z' &&
+		node.attributes.fill === 'none'
+	)
+		return true;
+
 	return false;
 }
 
@@ -79,7 +95,13 @@ const config = {
 						]
 					}
 				})
-			]
+			],
+			server: {
+				fs: {
+					// Allow servings content from /images.
+					allow: ['./static/images']
+				}
+			}
 		}
 	}
 };

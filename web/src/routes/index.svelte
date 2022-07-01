@@ -3,13 +3,24 @@
 </script>
 
 <script lang="ts">
+	import RecipeHeader from '$lib/recipe-view/RecipeHeader.svelte';
+
+	import ImageUrl from '../../static/images/omelette.jpg?url';
 </script>
 
 <svelte:head>
 	<title>Home</title>
-	<meta name="description" content="Svelte demo app" />
+	<meta name="description" content="The Nutriblocks Recipe App" />
 </svelte:head>
 
 <section>
-	<h1 class="text-4xl font-extrabold">This is the site content!</h1>
+	<RecipeHeader
+		isWeekly
+		title="Home-made Omelette"
+		nutrients={['Vitamin A', 'Iron']}
+		timeToMake={15}
+		servings={1}
+		imageUrl={ImageUrl}
+		gradient={['#a6e8f4', '#a6b4f4']}
+	/>
 </section>
