@@ -23,7 +23,17 @@ module.exports = {
 		colors: {
 			...warnlessColors
 		},
-		extend: {}
+		extend: {
+			fontSize: {
+				'2.5xl': [
+					'28px',
+					{
+						letterSpacing: '-0.02em',
+						lineHeight: '32px'
+					}
+				]
+			}
+		}
 	},
 	plugins: []
 };
