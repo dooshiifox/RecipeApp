@@ -1,14 +1,15 @@
 <script lang="ts">
 	import Header from '$lib/header/Header.svelte';
+	import Footer from '$lib/footer/Footer.svelte';
 	import '../app.css';
 </script>
 
-<Header />
+<div class="flex flex-col min-h-screen">
+	<Header />
 
-<main>
-	<slot />
-</main>
+	<main class="grow">
+		<slot />
+	</main>
 
-<footer>
-	<p class="font-bold text-2xl">This is a footer!</p>
-</footer>
+	<Footer />
+</div>
