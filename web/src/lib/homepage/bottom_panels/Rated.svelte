@@ -48,10 +48,10 @@
 				href={recipe.url}
 				class="flex {i % 2
 					? 'flex-row-reverse'
-					: 'flex-row'} rounded-2xl bg-white/10 hover:bg-black/10 group"
+					: 'flex-row'} rounded-2xl bg-white/10 hover:bg-black/10 group transition-colors duration-100"
 			>
 				<img
-					class="rounded-2xl w-[120px] aspect-[3/2] object-cover group-hover:brightness-90"
+					class="rounded-2xl w-[120px] aspect-[3/2] object-cover group-hover:brightness-90 transition-[filter] duration-100"
 					src={recipe.image}
 					alt="Image of {recipe.title}"
 				/>
@@ -73,7 +73,7 @@
 	<a
 		href="/rated"
 		slot="more"
-		class="w-60 h-12 bg-black/20 hover:bg-black/10 rounded-2xl flex items-center justify-center"
+		class="w-60 h-12 bg-black/20 hover:bg-black/10 transition-colors duration-100 rounded-2xl flex items-center justify-center"
 	>
 		<span class="text-white/90 text-xl font-bold">View More</span>
 	</a>

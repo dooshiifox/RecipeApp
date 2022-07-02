@@ -7,6 +7,7 @@
 	import Level from '$lib/homepage/Level.svelte';
 	import Saved from '$lib/homepage/bottom_panels/Saved.svelte';
 	import Rated from '$lib/homepage/bottom_panels/Rated.svelte';
+	import FoundNothing from '$lib/homepage/FoundNothing.svelte';
 
 	import ImageUrl from '../../static/images/omelette.jpg?url';
 </script>
@@ -38,5 +39,9 @@
 		<div class="w-[480px]">
 			<Rated />
 		</div>
+	</div>
+
+	<div class="mt-16 -z-20 relative">
+		<FoundNothing />
 	</div>
 </section>
