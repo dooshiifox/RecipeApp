@@ -4,8 +4,8 @@
 	import EmptyStar from '$lib/assets/icons/rounded/star-border.svg?component';
 
 	export let stars: number;
-	export let starClass: string;
-	let className: string;
+	export let starClass: string = '';
+	let className: string = '';
 	export { className as class };
 </script>
 

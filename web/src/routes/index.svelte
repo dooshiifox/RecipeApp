@@ -6,6 +6,7 @@
 	import RecipeHeader from '$lib/recipe-view/RecipeHeader.svelte';
 	import Level from '$lib/homepage/Level.svelte';
 	import Saved from '$lib/homepage/bottom_panels/Saved.svelte';
+	import Rated from '$lib/homepage/bottom_panels/Rated.svelte';
 
 	import ImageUrl from '../../static/images/omelette.jpg?url';
 </script>
@@ -33,6 +34,9 @@
 	<div class="flex flex-row items-center justify-center gap-[120px]">
 		<div class="w-[480px]">
 			<Saved />
+		</div>
+		<div class="w-[480px]">
+			<Rated />
 		</div>
 	</div>
 </section>
