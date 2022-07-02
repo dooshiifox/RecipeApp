@@ -32,6 +32,9 @@ module.exports = {
 						lineHeight: '32px'
 					}
 				]
+			},
+			borderRadius: {
+				'4xl': '32px'
 			}
 		}
 	},

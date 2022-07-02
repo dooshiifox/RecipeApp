@@ -15,5 +15,5 @@
 		? 'text-black after:bg-black/50 after:h-0.5'
 		: 'text-black/60 after:h-0 after:bg-transparent'} text-xl relative after:absolute after:bottom-0 after:left-0 after:right-0 transition-colors duration-200 after:transition-all after:duration-200"
 >
-	<a {href} class="outline-none "><slot /></a>
+	<a {href} class="outline-none"><slot /></a>
 </p>

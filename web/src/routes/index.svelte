@@ -3,9 +3,9 @@
 </script>
 
 <script lang="ts">
-	import Level from '$lib/homepage/Level.svelte';
-
 	import RecipeHeader from '$lib/recipe-view/RecipeHeader.svelte';
+	import Level from '$lib/homepage/Level.svelte';
+	import Saved from '$lib/homepage/bottom_panels/Saved.svelte';
 
 	import ImageUrl from '../../static/images/omelette.jpg?url';
 </script>
@@ -28,5 +28,11 @@
 
 	<div class="w-[720px] my-12 mx-auto">
 		<Level level={1} currentXp={0} nextXp={100} />
+	</div>
+
+	<div class="flex flex-row items-center justify-center gap-[120px]">
+		<div class="w-[480px]">
+			<Saved />
+		</div>
 	</div>
 </section>
