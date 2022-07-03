@@ -1,9 +1,12 @@
 <script lang="ts">
 	import TrophyIcon from '$lib/assets/icons/rounded/trophy.svg?component';
 
-	export let level: number;
-	export let currentXp: number;
-	export let nextXp: number;
+	import getLevelingInfo from '../../store/level';
+	let levelInfo = getLevelingInfo();
+
+	let level = levelInfo.level;
+	let currentXp = levelInfo.xp;
+	let nextXp = levelInfo.xpForNextLevel;
 
 	$: percent = Math.min(currentXp / nextXp, 1);
 

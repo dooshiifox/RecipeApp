@@ -10,9 +10,6 @@
 	import FoundNothing from '$lib/homepage/FoundNothing.svelte';
 
 	import ImageUrl from '../../static/images/omelette.jpg?url';
-
-	import getLevelingInfo from '../store/level';
-	let level = getLevelingInfo();
 </script>
 
 <svelte:head>
@@ -32,7 +29,8 @@
 	/>
 
 	<div class="w-[720px] my-12 mx-auto">
-		<Level level={level.level} currentXp={level.xp} nextXp={level.xpForNextLevel} />
+		<Level />
+	</div>
 	</div>
 
 	<div class="flex flex-row items-center justify-center gap-[120px]">

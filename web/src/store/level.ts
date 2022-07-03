@@ -1,3 +1,5 @@
+import { browser } from '$app/env';
+
 /** Returns the amount of XP to get from level `n` to level `n + 1`. */
 export function xpRequiredAtLevel(n: number): number {
 	// Level 1 => Level 2: 100xp   (100 + 25(0))
@@ -62,12 +64,17 @@ export function getLevel(totalXp: number): LevelingInfo {
 
 /** Returns the total amount of experience the user has. */
 export function getTotalXp(): number {
-	return parseInt(localStorage.getItem('totalXp') ?? '0');
+	if (browser) {
+		return parseInt(localStorage.getItem('totalXp') ?? '0');
+	}
+	return -1;
 }
 
 /** Sets the total amount of experience the user has. */
 export function setTotalXp(totalXp: number): void {
-	localStorage.setItem('totalXp', totalXp.toString());
+	if (browser) {
+		localStorage.setItem('totalXp', totalXp.toString());
+	}
 }
 
 /** Returns the user's experience and level info. */
