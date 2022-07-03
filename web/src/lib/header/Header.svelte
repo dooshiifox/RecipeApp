@@ -2,6 +2,9 @@
 	import HeaderNavButton from './HeaderNavButton.svelte';
 	import TrophyIcon from '$lib/assets/icons/rounded/trophy.svg?component';
 	import SearchIcon from '$lib/assets/icons/rounded/search.svg?component';
+	import getLevelingInfo from '../../store/level';
+
+	let level = getLevelingInfo().level;
 </script>
 
 <header class="h-[72px] bg-[#f7f7f7] w-full px-6 flex items-center">
@@ -60,6 +63,6 @@
 		class="ml-12 w-[70px] h-[50px] relative flex justify-center rounded-tl-2xl rounded-br-2xl rounded-tr-lg rounded-bl-lg from-[#f7f484] to-[#efd867] bg-gradient-to-br select-none"
 	>
 		<TrophyIcon class="relative -top-[calc((54px-50px)/2)]" fill="#fffdf0" width="54" height="54" />
-		<span class="text-[#54451f] text-xl font-bold absolute top-[4px]">17</span>
+		<span class="text-[#54451f] text-xl font-bold absolute top-[4px]">{level}</span>
 	</div>
 </header>
