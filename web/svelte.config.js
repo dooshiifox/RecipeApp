@@ -32,26 +32,15 @@ function isBlackBackground(node) {
 	)
 		return true;
 
+	let bannedPaths = ['M0 0h24v24H0V0z', 'M0,0h24v24H0V0z', 'M0 0h24v24H0z', 'M24 24H0V0h24v24z'];
+
 	// Check `<path d="M0 0h24v24H0V0z" fill="none"/>`
-	if (
-		node.name === 'path' &&
-		node.attributes.d === 'M0 0h24v24H0V0z' &&
-		node.attributes.fill === 'none'
-	)
-		return true;
-
 	// Check `<path d="M0,0h24v24H0V0z" fill="none"/>`
-	if (
-		node.name === 'path' &&
-		node.attributes.d === 'M0,0h24v24H0V0z' &&
-		node.attributes.fill === 'none'
-	)
-		return true;
-
 	// Check `<path d="M0 0h24v24H0z" fill="none"/>`
+	// Check `<path d="M24 24H0V0h24v24z" fill="none" opacity=".87"/>`
 	if (
 		node.name === 'path' &&
-		node.attributes.d === 'M0 0h24v24H0z' &&
+		bannedPaths.includes(node.attributes.d) &&
 		node.attributes.fill === 'none'
 	)
 		return true;

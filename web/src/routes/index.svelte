@@ -5,6 +5,7 @@
 <script lang="ts">
 	import RecipeHeader from '$lib/recipe-view/RecipeHeader.svelte';
 	import Level from '$lib/homepage/Level.svelte';
+	import Search from '$lib/homepage/search/Search.svelte';
 	import Saved from '$lib/homepage/bottom_panels/Saved.svelte';
 	import Rated from '$lib/homepage/bottom_panels/Rated.svelte';
 	import FoundNothing from '$lib/homepage/FoundNothing.svelte';
@@ -31,6 +32,9 @@
 	<div class="w-[720px] my-12 mx-auto">
 		<Level />
 	</div>
+
+	<div class="mb-10">
+		<Search />
 	</div>
 
 	<div class="flex flex-row items-center justify-center gap-[120px]">
