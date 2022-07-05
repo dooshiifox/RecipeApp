@@ -61,7 +61,8 @@ export function generateRandomTitle(): string {
 
 	// Pick between 1 and 3 ingredients.
 	const randomIngredients = [];
-	for (let i = 0; i < random(1, 3); i++) {
+	const ingredientQuantity = random(1, 4);
+	for (let i = 0; i < ingredientQuantity; i++) {
 		randomIngredients.push(randomIngredient());
 	}
 	const randomFoodType = pick(foodTypes);
