@@ -14,47 +14,53 @@
 	console.log(recipe);
 </script>
 
-<GradientBackground gradient={recipe.gradient} class="flex w-full rounded-2xl">
-	<img
-		src={recipe.image}
-		alt="Image of {recipe.title}"
-		class="object-cover w-40 h-[120px] rounded-l-2xl rounded-r-3xl"
-	/>
-	<div class="grow flex flex-col py-2 px-4">
-		<div class="flex">
-			<div class="grow flex flex-col">
-				<h1 class=" text-2xl font-bold text-black/80">{recipe.title}</h1>
-				<p class="text-base font-bold text-black/50 pl-4">
-					{toRecipeString(recipe.nutrients)}
-				</p>
-			</div>
+<a class="block group w-full h-[120px] hover:scale-[1.03] transition-transform" href={recipe.url}>
+	<GradientBackground
+		gradient={recipe.gradient}
+		class="flex h-full w-full rounded-2xl group-hover:brightness-105 transition-[filter]"
+	>
+		<img
+			src={recipe.image}
+			alt="Image of {recipe.title}"
+			class="object-cover aspect-[4/3] rounded-l-2xl rounded-r-3xl"
+		/>
+		<div class="grow flex flex-col py-2 px-4">
+			<!-- Title, nutrients, and bookmark -->
+			<div class="flex gap-2">
+				<div class="grow flex flex-col">
+					<h1 class=" text-2xl font-bold text-black/80 leading-6">{recipe.title}</h1>
+					<p class="text-base font-bold text-black/50 pl-4 mt-0.5">
+						{toRecipeString(recipe.nutrients)}
+					</p>
+				</div>
 
-			{#if recipe.bookmarked}
-				<BookmarkIcon class="w-8 h-8 fill-black/60" />
-			{:else}
-				<EmptyBookmarkIcon class="w-8 h-8 fill-black/60" />
-			{/if}
-		</div>
-		<!-- Fill any available vertical space so the info content
-			is at the bottom of the result. -->
-		<span class="grow" />
-		<div class="flex justify-center w-full">
-			<!-- Grid so that the Timer and Utensils have an equal size. -->
-			<div class="grow grid grid-cols-2 justify-center">
-				<!-- Time to make -->
-				<div class="flex items-center gap-2">
-					<TimerIcon class="w-5 h-5 fill-black/50" />
-					<span class="text-lg text-black/60">{toTimeString(recipe.timeToCook)}</span>
-				</div>
-				<!-- Servings -->
-				<div class="flex items-center gap-2">
-					<UtensilsIcon class="w-5 h-5 fill-black/50" />
-					<span class="text-lg text-black/60">Serves {recipe.servings}</span>
-				</div>
+				{#if recipe.bookmarked}
+					<BookmarkIcon class="w-8 h-8 fill-black/60" />
+				{:else}
+					<EmptyBookmarkIcon class="w-8 h-8 fill-black/60" />
+				{/if}
 			</div>
-			<!-- Rating. If recipe.rating === undefined, still takes up the
+			<!-- Fill any available vertical space so the info content
+			is at the bottom of the result. -->
+			<span class="grow" />
+			<div class="flex justify-center w-full">
+				<!-- Grid so that the Timer and Utensils have an equal size. -->
+				<div class="grow grid grid-cols-2 justify-center">
+					<!-- Time to make -->
+					<div class="flex items-center gap-2">
+						<TimerIcon class="w-5 h-5 fill-black/50" />
+						<span class="text-lg text-black/60">{toTimeString(recipe.timeToCook)}</span>
+					</div>
+					<!-- Servings -->
+					<div class="flex items-center gap-2">
+						<UtensilsIcon class="w-5 h-5 fill-black/50" />
+						<span class="text-lg text-black/60">Serves {recipe.servings}</span>
+					</div>
+				</div>
+				<!-- Rating. If recipe.rating === undefined, still takes up the
 				same amount of space, so things stay in line. -->
-			<Ratings starClass="fill-black/60 w-6 h-6 -mr-1" stars={recipe.rating} />
+				<Ratings starClass="fill-black/60 w-6 h-6 -mr-1" stars={recipe.rating} />
+			</div>
 		</div>
-	</div>
-</GradientBackground>
+	</GradientBackground>
+</a>
