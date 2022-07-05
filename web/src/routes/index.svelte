@@ -10,6 +10,8 @@
 	import Rated from '$lib/homepage/bottom_panels/Rated.svelte';
 	import FoundNothing from '$lib/homepage/FoundNothing.svelte';
 
+	import generateBasicRecipes from '../faked/BasicRecipe';
+
 	import ImageUrl from '../../static/images/omelette.jpg?url';
 </script>
 
@@ -34,7 +36,7 @@
 	</div>
 
 	<div class="mb-10">
-		<Search />
+		<Search searchResults={generateBasicRecipes(3)} />
 	</div>
 
 	<div class="flex flex-row items-center justify-center gap-[120px]">

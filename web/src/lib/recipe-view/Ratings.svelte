@@ -3,7 +3,10 @@
 	import HalfStar from '$lib/assets/icons/rounded/star-half.svg?component';
 	import EmptyStar from '$lib/assets/icons/rounded/star-border.svg?component';
 
-	export let stars: number;
+	/** The number of stars to show.
+	 * If undefined, does not show component but consumes width.
+	 */
+	export let stars: number | undefined;
 	export let starClass: string = '';
 	let className: string = '';
 	export { className as class };
@@ -12,7 +15,9 @@
 <div class="flex {className}">
 	{#each Array(5) as _, i}
 		<span>
-			{#if stars === i + 0.5}
+			{#if stars === undefined}
+				<EmptyStar class="{starClass} invisible" />
+			{:else if stars === i + 0.5}
 				<HalfStar class={starClass} />
 			{:else if stars >= i + 1}
 				<Star class={starClass} />

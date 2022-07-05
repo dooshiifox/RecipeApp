@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-
 	const dispatch = createEventDispatcher();
+
+	let className: string;
+	export { className as class };
 
 	export let selected: boolean = false;
 
@@ -14,7 +16,7 @@
 </script>
 
 <button
-	class="px-4 h-8 rounded-2xl flex justify-center items-center group {selected
+	class="{className} px-4 h-8 rounded-2xl flex justify-center items-center group {selected
 		? 'bg-white/80'
 		: 'bg-white/20'}"
 	on:click={() => toggleSelection()}

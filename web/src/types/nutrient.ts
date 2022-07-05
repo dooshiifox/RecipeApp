@@ -17,15 +17,18 @@ export type Nutrient = string;
  * ```
  */
 export function toRecipeString(nutrients: Nutrient[]): string {
-	if (nutrients.length === 0) {
-		return 'Contains... no nutrients?';
-	} else if (nutrients.length === 1) {
-		return 'Contains ' + nutrients[0];
-	} else if (nutrients.length === 2) {
-		return `Contains ${nutrients[0]} and ${nutrients[1]}`;
-	} else if (nutrients.length === 3) {
-		return `Contains ${nutrients[0]}, ${nutrients[1]}, and ${nutrients[2]}`;
-	} else {
-		return 'Contains a lot of nutrients!';
+	return `Contains ${seperator(nutrients) || 'no nutrients?'}`;
+}
+
+export function seperator(text: string[]): string {
+	switch (text.length) {
+		case 0:
+			return '';
+		case 1:
+			return text[0];
+		case 2:
+			return `${text[0]} and ${text[1]}`;
+		default:
+			return `${text.slice(0, -1).join(', ')}, and ${text.slice(-1)}`;
 	}
 }

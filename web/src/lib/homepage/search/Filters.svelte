@@ -21,7 +21,7 @@
 	}
 </script>
 
-<div class="w-[800px] bg-black/30 rounded-4xl py-4 px-12">
+<div class="w-[800px] bg-black/30 rounded-4xl pt-4 px-12 pb-8">
 	<p class="flex items-center justify-center gap-4">
 		<FilterIcon class="w-9 h-9 fill-white/90 inline" />
 		<span class="text-white/80 font-bold text-4xl">Filters</span>
@@ -30,9 +30,10 @@
 		{#each filters as filter}
 			<div class="flex flex-col gap-3">
 				<h4 class="text-3xl font-bold text-white/80">{filter.title}</h4>
-				<div class="flex gap-4 items-center flex-wrap">
+				<div class="flex items-center flex-wrap">
 					{#each filter.items as item}
 						<FilterTag
+							class="mr-4 mb-2"
 							on:toggleSelection={(e) => setSelection(filter.title, item, e.detail.selected)}
 						>
 							{item}

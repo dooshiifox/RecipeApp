@@ -3,9 +3,14 @@ export function toTimeString(timeToMake: number): string {
 	const hours = Math.floor(timeToMake / 60);
 	const minutes = timeToMake % 60;
 
-	if (hours === 0) return `${minutes} mins`;
+	let hrString = ``;
+	if (hours === 1) hrString = `${hours}hr`;
+	else if (hours > 1) hrString = `${hours}hrs`;
 
-	if (minutes === 0) return `${hours} hrs`;
+	let minString = ``;
+	if (minutes === 1) minString = `${minutes}min`;
+	else if (minutes > 1) minString = `${minutes}mins`;
 
-	return `${hours} hrs ${minutes} mins`;
+	// Trim removes space if hourString or minString is empty.
+	return `${hrString} ${minString}`.trim();
 }
