@@ -28,7 +28,9 @@ export function generateBasicRecipe(): BasicRecipe {
 	const title = generateRandomTitle();
 
 	// Convert the title to kebab-case for the url.
-	const titleKebab = title.toLowerCase().replace(/\s+/g, '-');
+	// Match anything not a letter or number and replace all of them in a row.
+	// e.g., Sour Bacon, Rice, and Cabbage on Rice => sour-bacon-rice-and-cabbage-on-rice
+	const titleKebab = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
 	const basicRecipe = new BasicRecipe(
 		randomUuid(),
