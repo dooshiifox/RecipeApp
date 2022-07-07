@@ -1,4 +1,4 @@
-import type { BasicRecipe } from 'src/types/BasicRecipe';
+import { BasicRecipe } from '../types/BasicRecipe';
 import {
 	randomUuid,
 	random,
@@ -12,6 +12,7 @@ import {
 	getRandomImage
 } from './random';
 import { seperator } from '../types/nutrient';
+import { browser } from '$app/env';
 
 /** Generates `count` number of random Basic Recipes. */
 export default function generateBasicRecipes(count: number): BasicRecipe[] {
@@ -29,19 +30,25 @@ export function generateBasicRecipe(): BasicRecipe {
 	// Convert the title to kebab-case for the url.
 	const titleKebab = title.toLowerCase().replace(/\s+/g, '-');
 
-	return {
-		id: randomUuid(),
-		url: '/recipe/' + titleKebab,
+	const basicRecipe = new BasicRecipe(
+		randomUuid(),
+		'/recipe/' + titleKebab,
 		title,
-		image: getRandomImage(),
-		nutrients: randomNutrients(),
-		timeToCook: randomTimeToCook(),
-		servings: randomServings(),
-		gradient: randomGradient(),
-		rating: randomRating(true),
+		getRandomImage(),
+		randomNutrients(),
+		randomTimeToCook(),
+		randomServings(),
+		randomGradient()
+	);
+
+	if (browser) {
+		// Random rating 0-5 with 50% chance for no set rating.
+		basicRecipe.rating = randomRating(true);
 		// 50% chance for the recipe to be bookmarked.
-		bookmarked: random() == 1
-	};
+		basicRecipe.bookmarked = random() == 1;
+	}
+
+	return basicRecipe;
 }
 
 export function generateRandomTitle(): string {

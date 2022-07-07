@@ -1,15 +1,11 @@
 <script lang="ts">
+	import { browser } from '$app/env';
 	import TrophyIcon from '$lib/assets/icons/rounded/trophy.svg?component';
-
 	import getLevelingInfo from '../../store/level';
-	let levelInfo = getLevelingInfo();
 
-	let level = levelInfo.level;
-	let currentXp = levelInfo.xp;
-	let nextXp = levelInfo.xpForNextLevel;
-
-	$: percent = Math.min(currentXp / nextXp, 1);
-
+	/** A collection of quotes that can be displayed below the
+	 * progress bar.
+	 */
 	const quotes = [
 		'Each day a little closer!',
 		"Take it slow, and it'll grow.",
@@ -20,7 +16,25 @@
 		"TIP: By getting all questions correct, you'll get bonus experience!"
 	];
 
-	const motivationalQuote = quotes[Math.floor(Math.random() * quotes.length)];
+	let level: number | string = '...';
+	let currentXp: number | string = '?';
+	let nextXp: number | string = '?';
+	let motivationalQuote = ' ';
+
+	$: percent =
+		typeof currentXp === 'number' && typeof nextXp === 'number'
+			? Math.min(currentXp / nextXp, 1)
+			: 0;
+
+	// Only set these things if not in prerender mode.
+	if (browser) {
+		let levelInfo = getLevelingInfo();
+
+		level = levelInfo.level;
+		currentXp = levelInfo.xp;
+		nextXp = levelInfo.xpForNextLevel;
+		motivationalQuote = quotes[Math.floor(Math.random() * quotes.length)];
+	}
 </script>
 
 <div

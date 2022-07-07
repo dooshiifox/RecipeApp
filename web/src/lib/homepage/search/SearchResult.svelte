@@ -8,6 +8,7 @@
 	import EmptyBookmarkIcon from '$lib/assets/icons/rounded/bookmark-border.svg?component';
 	import Ratings from '$lib/recipe-view/Ratings.svelte';
 	import { toTimeString } from '$lib/recipe-view/utils';
+	import { browser } from '$app/env';
 
 	export let recipe: BasicRecipe;
 
@@ -34,7 +35,7 @@
 					</p>
 				</div>
 
-				{#if recipe.bookmarked}
+				{#if browser && recipe.bookmarked}
 					<BookmarkIcon class="w-8 h-8 fill-black/60" />
 				{:else}
 					<EmptyBookmarkIcon class="w-8 h-8 fill-black/60" />
@@ -59,7 +60,11 @@
 				</div>
 				<!-- Rating. If recipe.rating === undefined, still takes up the
 				same amount of space, so things stay in line. -->
-				<Ratings starClass="fill-black/60 w-6 h-6 -mr-1" stars={recipe.rating} />
+				{#if browser}
+					<Ratings starClass="fill-black/60 w-6 h-6 -mr-1" stars={recipe.rating} />
+				{:else}
+					<Ratings starClass="fill-black/60 w-6 h-6 -mr-1" stars={undefined} />
+				{/if}
 			</div>
 		</div>
 	</GradientBackground>
