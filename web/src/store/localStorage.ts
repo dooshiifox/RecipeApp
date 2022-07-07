@@ -1,4 +1,4 @@
-import { browser } from '$app/env';
+import { browser, dev } from '$app/env';
 
 // const handlerServer = {
 // 	get: (target: Record<string, string>, key: string | symbol): string | null => {
@@ -11,10 +11,18 @@ import { browser } from '$app/env';
 // 	}
 // };
 
+// Notes about this:
+// In dev mode, saves to session because parsing localStorage is slow
+// and generating a bunch of fakes can make it very terrible.
+// In prod mode, saves to localStorage because it's persistant.
 const handlerBrowser = {
 	get: (target: Record<string, string>, key: string | symbol): string | null => {
 		if (typeof key === 'string') {
-			return localStorage.getItem(key);
+			if (dev) {
+				return sessionStorage.getItem(key);
+			} else {
+				return localStorage.getItem(key);
+			}
 		} else {
 			throw new Error('Tried to get key from localStorage with non-string key');
 		}
@@ -26,7 +34,11 @@ const handlerBrowser = {
 		if (typeof value !== 'string') {
 			throw new Error('Tried to set key to localStorage with non-string value');
 		}
-		localStorage.setItem(key.toString(), value);
+		if (dev) {
+			sessionStorage.setItem(key, value);
+		} else {
+			localStorage.setItem(key.toString(), value);
+		}
 		return true;
 	}
 };
