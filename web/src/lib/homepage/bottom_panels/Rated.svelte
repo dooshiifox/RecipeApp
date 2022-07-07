@@ -2,23 +2,28 @@
 	import BottomPanel from './BottomPanel.svelte';
 	import StarIcon from '$icons/star.svg?component';
 	import TimerIcon from '$icons/timer.svg?component';
-	import { generateBasicRecipe } from '$faked/BasicRecipe';
 	import type { BasicRecipe } from '$types/BasicRecipe';
 	import { toTimeString } from '$lib/recipe-view/utils';
 	import Ratings from '$lib/recipe-view/Ratings.svelte';
 
-	let recipes: BasicRecipe[] = [];
-
-	recipes.push(generateBasicRecipe());
-	recipes.push(generateBasicRecipe());
+	export let recipes: BasicRecipe[] = [];
 </script>
 
 <BottomPanel
 	foregroundGradient={['#f7bc84', '#ed7272']}
 	backgroundGradient={['#b27943', '#b43939']}
+	isEmpty={recipes.length === 0}
 >
 	<StarIcon slot="icon" class="w-10 h-10 fill-black/60" />
 	<span slot="title" class="font-bold text-3xl text-black/70">Your Best Rated</span>
+	<div slot="empty-desc" class="text-[22px] leading-[22px] text-black/60 text-center">
+		<p class="italic font-bold">Wait, you haven't rated any recipes yet?</p>
+		<br />
+		<p>
+			You can click the <StarIcon class="inline fill-black/70" /> Stars on the Recipe page to show how
+			much you liked it.
+		</p>
+	</div>
 	<p slot="desc" class="text-[22px] leading-[22px] text-black/60 text-center">
 		<span class="italic font-bold">Want to cook something delicious!</span><br />
 		Have a look at your favourite recipes, such as...

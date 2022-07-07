@@ -13,8 +13,7 @@
 	import generateBasicRecipes from '$faked/BasicRecipe';
 	import type { BasicRecipe } from '$types/BasicRecipe';
 
-	let allRecipes: BasicRecipe[] = generateBasicRecipes(200);
-	console.debug('Recipes generated.');
+	let allRecipes: BasicRecipe[] = generateBasicRecipes(40);
 
 	let searchResults: BasicRecipe[] = [];
 	function onSearch(
@@ -51,6 +50,11 @@
 			})
 			.slice(0, resultsPerPage);
 	}
+
+	let savedRecipes = allRecipes.filter((recipe) => recipe.bookmarked);
+	let ratedRecipes = allRecipes
+		.filter((recipe) => recipe.rating !== undefined)
+		.sort((a, b) => (b.rating as number) - (a.rating as number));
 </script>
 
 <svelte:head>
@@ -77,12 +81,12 @@
 		<Search {searchResults} on:search={onSearch} />
 	</div>
 
-	<div class="flex flex-row items-center justify-center gap-[120px]">
+	<div class="flex flex-row justify-center gap-[120px]">
 		<div class="w-[480px]">
-			<Saved />
+			<Saved recipes={savedRecipes.slice(0, 3)} />
 		</div>
 		<div class="w-[480px]">
-			<Rated />
+			<Rated recipes={ratedRecipes.slice(0, 3)} />
 		</div>
 	</div>
 
