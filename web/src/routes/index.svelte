@@ -11,6 +11,46 @@
 	import FoundNothing from '$lib/homepage/FoundNothing.svelte';
 
 	import generateBasicRecipes from '$faked/BasicRecipe';
+	import type { BasicRecipe } from '$types/BasicRecipe';
+
+	let allRecipes: BasicRecipe[] = generateBasicRecipes(200);
+	console.debug('Recipes generated.');
+
+	let searchResults: BasicRecipe[] = [];
+	function onSearch(
+		e: CustomEvent<{
+			query: string;
+			selectedFilters: Record<string, Set<string>>;
+			resultsPerPage: number;
+		}>
+	) {
+		const nutrientFilters = e.detail.selectedFilters['Nutrients'] ?? [];
+		const lowercaseNutrients = new Set(
+			[...nutrientFilters].map((nutrient) => nutrient.toLowerCase())
+		);
+
+		const query = e.detail.query && new RegExp(e.detail.query.split('').join('.*'));
+		const resultsPerPage = e.detail.resultsPerPage;
+
+		searchResults = allRecipes
+			.filter((recipe) => {
+				if (lowercaseNutrients.size !== 0) {
+					// Iterate over every nutrient in the recipe,
+					// checking if *any* are in the nutrient filter.
+					// If so, the recipe is valid. If not, return false as it isn't.
+					if (!recipe.nutrients.some((nutrient) => lowercaseNutrients.has(nutrient.toLowerCase())))
+						return false;
+				}
+
+				if (query) {
+					// Check if the recipe name contains the query
+					if (!recipe.title.toLowerCase().match(query)) return false;
+				}
+
+				return true;
+			})
+			.slice(0, resultsPerPage);
+	}
 </script>
 
 <svelte:head>
@@ -34,7 +74,7 @@
 	</div>
 
 	<div class="mb-10">
-		<Search searchResults={generateBasicRecipes(3)} />
+		<Search {searchResults} on:search={onSearch} />
 	</div>
 
 	<div class="flex flex-row items-center justify-center gap-[120px]">

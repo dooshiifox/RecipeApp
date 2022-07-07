@@ -1,7 +1,10 @@
 <script lang="ts">
 	import FilterIcon from '$icons/filter.svg?component';
+	import { createEventDispatcher } from 'svelte';
 	import type { Filter } from './filters';
 	import FilterTag from './FilterTag.svelte';
+
+	const dispatch = createEventDispatcher();
 
 	/** A collection of all possible filters. */
 	export let filters: Filter[];
@@ -18,6 +21,13 @@
 		} else {
 			selectedFilters[filter].delete(item);
 		}
+
+		dispatch('change', { filter, item, setSelected });
+	}
+
+	/** Gets the selection state of a filter item. */
+	function getSelection(filter: string, item: string): boolean {
+		return selectedFilters[filter]?.has(item);
 	}
 </script>
 
@@ -34,6 +44,7 @@
 					{#each filter.items as item}
 						<FilterTag
 							class="mr-4 mb-2"
+							selected={getSelection(filter.title, item)}
 							on:toggleSelection={(e) => setSelection(filter.title, item, e.detail.selected)}
 						>
 							{item}

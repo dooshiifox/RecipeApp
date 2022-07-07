@@ -15,8 +15,6 @@
 	function bookmark() {
 		recipe.bookmarked = !recipe.bookmarked;
 	}
-
-	console.log(recipe);
 </script>
 
 <a class="block group w-full h-[120px] hover:scale-[1.03] transition-transform" href={recipe.url}>
