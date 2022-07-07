@@ -67,7 +67,7 @@
 </script>
 
 <div class="relative w-full">
-	<div class="absolute inset-0 bg-[#2e2e30] shadow-lg -z-10" />
+	<div class="absolute inset-0 bg-[#2e2e30] -z-10 skew-y-2 background-shadow" />
 	<div class="py-8 mx-auto flex flex-col items-center">
 		<!-- Search icon and text at top of container. -->
 		<div class="flex gap-6 items-center">
@@ -139,3 +139,10 @@
 		{/if}
 	</div>
 </div>
+
+<style>
+	.background-shadow {
+		/* Box shadow on top and bottom */
+		box-shadow: inset 0 8px 8px -8px #fff8, inset 0 -8px 8px -8px #fff8;
+	}
+</style>

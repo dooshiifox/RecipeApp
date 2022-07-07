@@ -11,7 +11,8 @@
 	import FoundNothing from '$lib/homepage/FoundNothing.svelte';
 
 	import generateBasicRecipes from '$faked/BasicRecipe';
-	import type { BasicRecipe } from '$types/BasicRecipe';
+	import { BasicRecipe } from '$types/BasicRecipe';
+	import { randomUuid } from '$src/faked/random';
 
 	let allRecipes: BasicRecipe[] = generateBasicRecipes(40);
 
@@ -65,12 +66,16 @@
 <section>
 	<RecipeHeader
 		isWeekly
-		title="Home-made Omelette"
-		nutrients={['Vitamin A', 'Iron']}
-		timeToMake={15}
-		servings={1}
-		imageUrl="/images/omelette.jpg"
-		gradient={['#a6e8f4', '#a6b4f4']}
+		recipe={new BasicRecipe(
+			randomUuid(),
+			'home-made-omelette',
+			'Home-Made Omelette',
+			'/images/omelette.jpg',
+			['Vitamin A', 'Iron'],
+			15,
+			1,
+			['#a6e8f4', '#a6b4f4']
+		)}
 	/>
 
 	<div class="w-[720px] my-12 mx-auto">
@@ -90,7 +95,7 @@
 		</div>
 	</div>
 
-	<div class="mt-16 -z-20 relative">
+	<div class="mt-16">
 		<FoundNothing />
 	</div>
 </section>

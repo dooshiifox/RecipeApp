@@ -2,7 +2,7 @@
 </script>
 
 <footer
-	class="h-[72px] w-full flex items-center justify-center gap-20 bg-[url('/images/footer-bg.jpg')] bg-cover"
+	class="h-[72px] w-full flex items-center justify-center gap-20 bg-[url('/images/footer-bg.jpg')] bg-cover z-50"
 >
 	<!-- A wrapper so the slanted background works. -->
 	<a class="block relative z-10 h-full group" href="https://nutriblocks.co.nz/">

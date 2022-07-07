@@ -10,7 +10,7 @@
 	if (browser) level = getLevelingInfo().level;
 </script>
 
-<header class="h-[72px] bg-[#f7f7f7] w-full px-6 flex items-center">
+<header class="h-[72px] bg-[#f7f7f7] w-full px-6 flex items-center z-50">
 	<!-- The navigation buttons -->
 	<div class="px-8 flex space-x-10">
 		<HeaderNavButton

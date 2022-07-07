@@ -5,8 +5,6 @@
 </script>
 
 <div class="relative w-full pt-8 pb-10 flex flex-col items-center justify-center gap-6">
-	<!-- titled background -->
-	<div class="absolute inset-0 -z-10 -skew-y-2 bg-[#ebebed]" />
 	<div class="flex flex-col items-center justify-center">
 		<h5 class="text-2xl font-bold text-black/90">Don't see anything you like?</h5>
 		<p class="text-lg text-black/60 text-center leading-5">
@@ -32,9 +30,11 @@
 	</div>
 	<a
 		href="/suggest-recipe"
-		class="px-6 py-3 bg-gradient-to-br from-[#64e16c] to-[#77e8ad] rounded-2xl flex items-center justify-center gap-4"
+		class="px-6 py-3 bg-gradient-to-br from-[#64e16c] to-[#77e8ad] hover:scale-105 transition-transform rounded-2xl flex items-center justify-center gap-4"
 	>
 		<ListIcon class="w-8 h-8 fill-[#233e2a]" />
 		<span class="text-[#233e2a] text-2xl font-bold">Suggest a Recipe</span>
 	</a>
+	<!-- tilted background -->
+	<div class="absolute inset-0 -z-10 -skew-y-2 bg-[#ebebed] pointer-events-none cursor-pointer" />
 </div>
