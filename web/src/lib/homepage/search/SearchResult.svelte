@@ -12,6 +12,10 @@
 
 	export let recipe: BasicRecipe;
 
+	function bookmark() {
+		recipe.bookmarked = !recipe.bookmarked;
+	}
+
 	console.log(recipe);
 </script>
 
@@ -25,26 +29,35 @@
 			alt="Image of {recipe.title}"
 			class="object-cover aspect-[4/3] rounded-l-2xl rounded-r-3xl"
 		/>
-		<div class="grow flex flex-col py-2 px-4">
+		<div class="grow flex flex-col">
 			<!-- Title, nutrients, and bookmark -->
 			<div class="flex gap-2">
-				<div class="grow flex flex-col">
+				<div class="grow flex flex-col mt-2 ml-4">
 					<h1 class=" text-2xl font-bold text-black/80 leading-6">{recipe.title}</h1>
 					<p class="text-base font-bold text-black/50 pl-4 mt-0.5">
 						{toRecipeString(recipe.nutrients)}
 					</p>
 				</div>
 
-				{#if browser && recipe.bookmarked}
-					<BookmarkIcon class="w-8 h-8 fill-black/60" />
-				{:else}
-					<EmptyBookmarkIcon class="w-8 h-8 fill-black/60" />
-				{/if}
+				<div
+					class="w-12 h-12 grid place-items-center bookmark-wrapper"
+					on:click|stopPropagation|preventDefault={bookmark}
+				>
+					<div
+						class="p-1 rounded-lg bookmark-wrapper-hover:bg-white/30 fill-black/60 transition-all"
+					>
+						{#if browser && recipe.bookmarked}
+							<BookmarkIcon class="w-8 h-8" />
+						{:else}
+							<EmptyBookmarkIcon class="w-8 h-8" />
+						{/if}
+					</div>
+				</div>
 			</div>
 			<!-- Fill any available vertical space so the info content
 			is at the bottom of the result. -->
 			<span class="grow" />
-			<div class="flex justify-center w-full">
+			<div class="flex justify-center w-full pb-2 px-4">
 				<!-- Grid so that the Timer and Utensils have an equal size. -->
 				<div class="grow grid grid-cols-2 justify-center">
 					<!-- Time to make -->
@@ -69,3 +82,9 @@
 		</div>
 	</GradientBackground>
 </a>
+
+<style>
+	.bookmark-wrapper:hover .bookmark-wrapper-hover\:bg-white\/30 {
+		background-color: rgb(255 255 255 / 0.3);
+	}
+</style>
