@@ -23,7 +23,7 @@ export default function generateBasicRecipes(count: number): BasicRecipe[] {
 	return recipes;
 }
 
-/** Generates  */
+/** Generates a single basic recipe. */
 export function generateBasicRecipe(): BasicRecipe {
 	const title = generateRandomTitle();
 
