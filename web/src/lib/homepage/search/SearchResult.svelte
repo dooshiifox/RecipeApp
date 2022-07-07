@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type { BasicRecipe } from 'src/types/BasicRecipe';
-	import { toRecipeString } from '$lib/../types/nutrient';
+	import type { BasicRecipe } from '$types/BasicRecipe';
+	import { toRecipeString } from '$types/nutrient';
 	import GradientBackground from '$lib/GradientBackground.svelte';
-	import TimerIcon from '$lib/assets/icons/rounded/timer.svg?component';
-	import UtensilsIcon from '$lib/assets/icons/rounded/utensils.svg?component';
-	import BookmarkIcon from '$lib/assets/icons/rounded/bookmark.svg?component';
-	import EmptyBookmarkIcon from '$lib/assets/icons/rounded/bookmark-border.svg?component';
+	import TimerIcon from '$icons/timer.svg?component';
+	import UtensilsIcon from '$icons/utensils.svg?component';
+	import BookmarkIcon from '$icons/bookmark.svg?component';
+	import EmptyBookmarkIcon from '$icons/bookmark-border.svg?component';
 	import Ratings from '$lib/recipe-view/Ratings.svelte';
 	import { toTimeString } from '$lib/recipe-view/utils';
 	import { browser } from '$app/env';

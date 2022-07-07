@@ -1,6 +1,6 @@
 <script lang="ts">
 	import GradientBackground from '$lib/GradientBackground.svelte';
-	import type { Gradient } from 'src/types/gradient';
+	import type { Gradient } from '$types/gradient';
 
 	export let foregroundGradient: Gradient;
 	export let backgroundGradient: Gradient;

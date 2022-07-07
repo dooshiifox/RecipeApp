@@ -1,4 +1,4 @@
-import type { Gradient } from 'src/types/gradient';
+import type { Gradient } from '$types/gradient';
 
 /** Generates a random number [min, max)  */
 export function random(min: number, max: number): number;

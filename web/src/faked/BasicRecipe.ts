@@ -1,4 +1,5 @@
-import { BasicRecipe } from '../types/BasicRecipe';
+import { BasicRecipe } from '$types/BasicRecipe';
+import { seperator } from '$types/nutrient';
 import {
 	randomUuid,
 	random,
@@ -11,7 +12,6 @@ import {
 	randomNutrients,
 	getRandomImage
 } from './random';
-import { seperator } from '../types/nutrient';
 import { browser } from '$app/env';
 
 /** Generates `count` number of random Basic Recipes. */

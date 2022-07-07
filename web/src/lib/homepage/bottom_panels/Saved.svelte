@@ -1,34 +1,16 @@
 <script lang="ts">
-	import BookmarkIcon from '$lib/assets/icons/rounded/bookmark.svg?component';
-	import TimerIcon from '$lib/assets/icons/rounded/timer.svg?component';
-	import UtensilsIcon from '$lib/assets/icons/rounded/utensils.svg?component';
-	import { toTimeString } from '$lib/recipe-view/utils';
 	import BottomPanel from './BottomPanel.svelte';
+	import BookmarkIcon from '$icons/bookmark.svg?component';
+	import TimerIcon from '$icons/timer.svg?component';
+	import UtensilsIcon from '$icons/utensils.svg?component';
+	import type { BasicRecipe } from '$types/BasicRecipe';
+	import { generateBasicRecipe } from '$faked/BasicRecipe';
+	import { toTimeString } from '$lib/recipe-view/utils';
 
-	let recipes: {
-		title: string;
-		image: string;
-		url: string;
-		timeToMake: number;
-		servings: number;
-	}[] = [];
+	let recipes: BasicRecipe[] = [];
 
-	recipes.push({
-		title: 'Pumpkin Fritters',
-		image:
-			'https://www.heartfoundation.org.nz/media/images/all-shared-sections/recipes/pumpkin-fritters_737_373_c1.png',
-		url: 'https://www.heartfoundation.org.nz/wellbeing/healthy-recipes/pumpkin-fritters',
-		timeToMake: 25,
-		servings: 10
-	});
-	recipes.push({
-		title: 'Fresh Tomato and Capsicum Pasta ',
-		image:
-			'https://www.heartfoundation.org.nz/media/images/all-shared-sections/recipes/tomato-capsicum-pasta-sauce_737_373_c1.jpg',
-		url: 'https://www.heartfoundation.org.nz/wellbeing/healthy-recipes/fresh-tomato-and-capsicum-pasta-sauce',
-		timeToMake: 40,
-		servings: 8
-	});
+	recipes.push(generateBasicRecipe());
+	recipes.push(generateBasicRecipe());
 </script>
 
 <BottomPanel
@@ -62,7 +44,7 @@
 					<div class="flex justify-center w-full">
 						<div class="grow flex items-center gap-2">
 							<TimerIcon class="w-5 h-5 fill-black/50" />
-							<span class="text-lg text-black/60">{toTimeString(recipe.timeToMake)}</span>
+							<span class="text-lg text-black/60">{toTimeString(recipe.timeToCook)}</span>
 						</div>
 						<div class="grow flex items-center gap-2">
 							<UtensilsIcon class="w-5 h-5 fill-black/50" />

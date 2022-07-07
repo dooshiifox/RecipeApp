@@ -2,12 +2,12 @@
 	import { slide } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
 
-	import SearchIcon from '$lib/assets/icons/rounded/search.svg?component';
-	import MoreIcon from '$lib/assets/icons/rounded/more.svg?component';
+	import SearchIcon from '$icons/search.svg?component';
+	import MoreIcon from '$icons/more.svg?component';
 	import Filters from './Filters.svelte';
 	import SearchResult from './SearchResult.svelte';
 	import type { Filter } from './filters';
-	import type { BasicRecipe } from 'src/types/BasicRecipe';
+	import type { BasicRecipe } from '$types/BasicRecipe';
 
 	export let query: string = '';
 

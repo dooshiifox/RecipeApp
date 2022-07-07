@@ -8,6 +8,20 @@
 		"resolveJsonModule": true,
 		"skipLibCheck": true,
 		"sourceMap": true,
-		"strict": true
+		"strict": true,
+		"paths": {
+			"$src": ["src"],
+			"$src/*": ["src/*"],
+			"$faked": ["src/faked"],
+			"$faked/*": ["src/faked/*"],
+			"$store": ["src/store"],
+			"$store/*": ["src/store/*"],
+			"$types": ["src/types"],
+			"$types/*": ["src/types/*"],
+			"$lib": ["src/lib"],
+			"$lib/*": ["src/lib/*"],
+			"$icons": ["src/lib/assets/icons/rounded"],
+			"$icons/*": ["src/lib/assets/icons/rounded/*"]
+		}
 	}
 }

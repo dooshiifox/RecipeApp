@@ -1,5 +1,5 @@
 <script lang="ts">
-	import FilterIcon from '$lib/assets/icons/rounded/filter.svg?component';
+	import FilterIcon from '$icons/filter.svg?component';
 	import type { Filter } from './filters';
 	import FilterTag from './FilterTag.svelte';
 

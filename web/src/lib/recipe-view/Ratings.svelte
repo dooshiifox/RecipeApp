@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Star from '$lib/assets/icons/rounded/star.svg?component';
-	import HalfStar from '$lib/assets/icons/rounded/star-half.svg?component';
-	import EmptyStar from '$lib/assets/icons/rounded/star-border.svg?component';
+	import Star from '$icons/star.svg?component';
+	import HalfStar from '$icons/star-half.svg?component';
+	import EmptyStar from '$icons/star-border.svg?component';
 
 	/** The number of stars to show.
 	 * If undefined, does not show component but consumes width.

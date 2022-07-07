@@ -1,10 +1,13 @@
 <script lang="ts">
 	import HeaderNavButton from './HeaderNavButton.svelte';
-	import TrophyIcon from '$lib/assets/icons/rounded/trophy.svg?component';
-	import SearchIcon from '$lib/assets/icons/rounded/search.svg?component';
-	import getLevelingInfo from '../../store/level';
+	import TrophyIcon from '$icons/trophy.svg?component';
+	import SearchIcon from '$icons/search.svg?component';
+	import getLevelingInfo from '$store/level';
+	import { browser } from '$app/env';
 
-	let level = getLevelingInfo().level;
+	// Only set level if in browser mode. Else leave as placeholder.
+	let level: number | string = '?';
+	if (browser) level = getLevelingInfo().level;
 </script>
 
 <header class="h-[72px] bg-[#f7f7f7] w-full px-6 flex items-center">

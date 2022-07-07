@@ -1,6 +1,6 @@
 <script lang="ts">
 	/* Either `gradient` or `starting` and `ending` must be defined. */
-	import type { Gradient, Color } from 'src/types/gradient';
+	import type { Gradient, Color } from '$types/gradient';
 
 	export let gradient: Gradient | undefined = undefined;
 	export let starting: Color | undefined = undefined;

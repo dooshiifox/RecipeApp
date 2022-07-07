@@ -61,6 +61,14 @@ const config = {
 	kit: {
 		adapter: adapter(),
 
+		alias: {
+			$src: 'src',
+			$faked: 'src/faked',
+			$store: 'src/store',
+			$types: 'src/types',
+			$icons: 'src/lib/assets/icons/rounded'
+		},
+
 		// Override http methods in the Todo forms
 		methodOverride: {
 			allowed: ['PATCH', 'DELETE']

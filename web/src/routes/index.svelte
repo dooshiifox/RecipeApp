@@ -10,9 +10,7 @@
 	import Rated from '$lib/homepage/bottom_panels/Rated.svelte';
 	import FoundNothing from '$lib/homepage/FoundNothing.svelte';
 
-	import generateBasicRecipes from '../faked/BasicRecipe';
-
-	import ImageUrl from '../../static/images/omelette.jpg?url';
+	import generateBasicRecipes from '$faked/BasicRecipe';
 </script>
 
 <svelte:head>
@@ -27,7 +25,7 @@
 		nutrients={['Vitamin A', 'Iron']}
 		timeToMake={15}
 		servings={1}
-		imageUrl={ImageUrl}
+		imageUrl="/images/omelette.jpg"
 		gradient={['#a6e8f4', '#a6b4f4']}
 	/>
 

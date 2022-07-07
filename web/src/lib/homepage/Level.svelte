@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/env';
-	import TrophyIcon from '$lib/assets/icons/rounded/trophy.svg?component';
-	import getLevelingInfo from '../../store/level';
+	import TrophyIcon from '$icons/trophy.svg?component';
+	import getLevelingInfo from '$store/level';
 
 	/** A collection of quotes that can be displayed below the
 	 * progress bar.

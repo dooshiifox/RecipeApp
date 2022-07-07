@@ -1,7 +1,7 @@
 <script lang="ts">
-	import SearchIcon from '$lib/assets/icons/rounded/search.svg?component';
-	import FilterIcon from '$lib/assets/icons/rounded/filter.svg?component';
-	import ListIcon from '$lib/assets/icons/rounded/list.svg?component';
+	import SearchIcon from '$icons/search.svg?component';
+	import FilterIcon from '$icons/filter.svg?component';
+	import ListIcon from '$icons/list.svg?component';
 </script>
 
 <div class="relative w-full pt-8 pb-10 flex flex-col items-center justify-center gap-6">

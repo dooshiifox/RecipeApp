@@ -1,34 +1,16 @@
 <script lang="ts">
-	import StarIcon from '$lib/assets/icons/rounded/star.svg?component';
-	import TimerIcon from '$lib/assets/icons/rounded/timer.svg?component';
-	import Ratings from '$lib/recipe-view/Ratings.svelte';
-	import { toTimeString } from '$lib/recipe-view/utils';
 	import BottomPanel from './BottomPanel.svelte';
+	import StarIcon from '$icons/star.svg?component';
+	import TimerIcon from '$icons/timer.svg?component';
+	import { generateBasicRecipe } from '$faked/BasicRecipe';
+	import type { BasicRecipe } from '$types/BasicRecipe';
+	import { toTimeString } from '$lib/recipe-view/utils';
+	import Ratings from '$lib/recipe-view/Ratings.svelte';
 
-	let recipes: {
-		title: string;
-		image: string;
-		url: string;
-		timeToMake: number;
-		rating: number;
-	}[] = [];
+	let recipes: BasicRecipe[] = [];
 
-	recipes.push({
-		title: 'Pumpkin Fritters',
-		image:
-			'https://www.heartfoundation.org.nz/media/images/all-shared-sections/recipes/pumpkin-fritters_737_373_c1.png',
-		url: 'https://www.heartfoundation.org.nz/wellbeing/healthy-recipes/pumpkin-fritters',
-		timeToMake: 25,
-		rating: 5
-	});
-	recipes.push({
-		title: 'Fresh Tomato and Capsicum Pasta ',
-		image:
-			'https://www.heartfoundation.org.nz/media/images/all-shared-sections/recipes/tomato-capsicum-pasta-sauce_737_373_c1.jpg',
-		url: 'https://www.heartfoundation.org.nz/wellbeing/healthy-recipes/fresh-tomato-and-capsicum-pasta-sauce',
-		timeToMake: 40,
-		rating: 3.5
-	});
+	recipes.push(generateBasicRecipe());
+	recipes.push(generateBasicRecipe());
 </script>
 
 <BottomPanel
@@ -62,7 +44,7 @@
 					<div class="flex justify-center w-full">
 						<div class="grow flex items-center justify-cen gap-2">
 							<TimerIcon class="w-5 h-5 fill-black/50" />
-							<span class="text-lg text-black/60">{toTimeString(recipe.timeToMake)}</span>
+							<span class="text-lg text-black/60">{toTimeString(recipe.timeToCook)}</span>
 						</div>
 						<Ratings starClass="fill-black/60 w-6 h-6 -mr-1" stars={recipe.rating} />
 					</div>

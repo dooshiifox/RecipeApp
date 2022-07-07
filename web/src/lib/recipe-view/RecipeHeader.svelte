@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { Gradient } from '../../types/gradient';
-	import { toRecipeString, type Nutrient } from '../../types/nutrient';
+	import type { Gradient } from '$types/gradient';
+	import { toRecipeString, type Nutrient } from '$types/nutrient';
 
-	import TimerIcon from '$lib/assets/icons/rounded/timer.svg?component';
-	import UtensilsIcon from '$lib/assets/icons/rounded/utensils.svg?component';
+	import TimerIcon from '$icons/timer.svg?component';
+	import UtensilsIcon from '$icons/utensils.svg?component';
 	import { toTimeString } from './utils';
 	import Ratings from './Ratings.svelte';
 
