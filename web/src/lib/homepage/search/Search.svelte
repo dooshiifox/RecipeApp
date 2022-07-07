@@ -75,7 +75,7 @@
 			<span class="text-[54px] font-bold text-white/90">Search</span>
 		</div>
 		<!-- Search box and filters -->
-		<div class="mt-4 flex flex-col items-center">
+		<div class="mt-6 flex flex-col items-center">
 			<div class="flex items-center gap-6 mb-4">
 				<div
 					class="rounded-xl h-12 w-full max-w-[540px] min-w-[360px] py-1 pl-2 pr-4 flex justify-center items-center bg-white border-black/5 border"
@@ -109,7 +109,7 @@
 				</div>
 			{/if}
 		</div>
-		<div class="w-[600px] flex flex-col items-center space-y-4">
+		<div class="w-[600px] flex flex-col items-center space-y-4 mt-4">
 			<!-- Search results -->
 			{#each searchResults as recipe (recipe.id)}
 				<div transition:slide|local>
@@ -123,5 +123,19 @@
 				</div>
 			{/each}
 		</div>
+		<!-- Load more button -->
+		{#if resultsPerPage === 3}
+			<div class="flex flex-col items-center space-y-4 mt-4">
+				<button
+					class="bg-white/10 hover:bg-white/20 transition-colors rounded-2xl w-full px-12 py-4 text-2xl font-bold text-white/90 text-center"
+					on:click={() => {
+						resultsPerPage = 10;
+						dispatchSearch();
+					}}
+				>
+					Load more results
+				</button>
+			</div>
+		{/if}
 	</div>
 </div>
