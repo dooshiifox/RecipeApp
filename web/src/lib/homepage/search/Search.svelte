@@ -76,21 +76,24 @@
 		</div>
 		<!-- Search box and filters -->
 		<div class="mt-6 flex flex-col items-center">
+			<!-- Search box wrapper -->
 			<div class="flex items-center gap-6 mb-4">
+				<!-- Search box -->
 				<div
-					class="rounded-xl h-12 w-full max-w-[540px] min-w-[360px] py-1 pl-2 pr-4 flex justify-center items-center bg-white border-black/5 border"
+					class="rounded-xl h-12 w-[420px] py-1 pl-2 pr-4 flex justify-center items-center bg-white border-black/5 border"
 				>
 					<SearchIcon class="ml-1 w-8 h-8 fill-black/30" />
 					<input
 						type="text"
-						class="ml-3 w-full h-full text-2xl outline-none border-b border-b-transparent focus:border-b-black/50 transition-[border-bottom-color] duration-100"
+						class="ml-3 grow h-full text-2xl outline-none border-b border-b-transparent focus:border-b-black/50 transition-[border-bottom-color] duration-100"
 						placeholder="Search for Recipes"
 						bind:value={query}
 						on:input={() => cooldown.use()}
 					/>
 				</div>
+				<!-- Open/Close filters button -->
 				<button
-					class="p-1 rounded-xl bg-black/30"
+					class="p-1 rounded-xl bg-black/30 w-max h-max"
 					on:click|preventDefault|stopPropagation={() => {
 						showFilterBox = !showFilterBox;
 						pressCount++;
@@ -109,10 +112,10 @@
 				</div>
 			{/if}
 		</div>
-		<div class="w-[600px] flex flex-col items-center space-y-4 mt-4">
+		<div class="w-[600px] space-y-4 mt-4">
 			<!-- Search results -->
 			{#each searchResults as recipe (recipe.id)}
-				<div transition:slide|local>
+				<div>
 					<SearchResult {recipe} />
 				</div>
 			{:else}

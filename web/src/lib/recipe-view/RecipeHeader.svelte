@@ -20,7 +20,7 @@
 	<img
 		src={recipe.image}
 		alt="Image of {recipe.title}"
-		class="-skew-x-2 h-full object-cover aspect-[7/4] rounded-3xl"
+		class="-skew-x-2 h-80 object-cover aspect-[7/4] rounded-3xl"
 	/>
 	<div class="flex flex-col h-full pt-10 pl-8 justify-self-start -skew-y-2">
 		{#if isWeekly}
