@@ -45,7 +45,8 @@
 	/** All the search results to display. */
 	export let searchResults: BasicRecipe[] = [];
 	/** The number of results to load. */
-	export let resultsPerPage: number = 3;
+	// Initially 3 unless the `query` is set by the caller component.
+	export let resultsPerPage: number = query === '' ? 3 : 10;
 
 	function onChange() {
 		// If query or selectedFilters change, set the number of results

@@ -4,10 +4,22 @@
 	import SearchIcon from '$icons/search.svg?component';
 	import getLevelingInfo from '$store/level';
 	import { browser } from '$app/env';
+	import { goto } from '$app/navigation';
 
 	// Only set level if in browser mode. Else leave as placeholder.
 	let level: number | string = '?';
 	if (browser) level = getLevelingInfo().level;
+
+	export let search: string = '';
+	function checkEnter(e: KeyboardEvent) {
+		if (e.key === 'Enter' && search !== '') {
+			e.preventDefault();
+			e.stopPropagation();
+
+			// Redirect to the search page.
+			window.location.href = '/?search=' + search;
+		}
+	}
 </script>
 
 <header class="h-[72px] bg-[#f7f7f7] w-full px-6 flex items-center z-50">
@@ -57,6 +69,8 @@
 				type="text"
 				class="ml-3 w-full h-full text-xl outline-none border-b border-b-transparent focus:border-b-black/50 transition-[border-bottom-color] duration-100"
 				placeholder="Search for Recipes"
+				bind:value={search}
+				on:keyup={checkEnter}
 			/>
 		</div>
 	</div>

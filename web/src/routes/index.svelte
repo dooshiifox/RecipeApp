@@ -13,8 +13,16 @@
 	import generateBasicRecipes from '$faked/BasicRecipe';
 	import { BasicRecipe } from '$types/BasicRecipe';
 	import { randomUuid } from '$src/faked/random';
+	import { page } from '$app/stores';
 
 	let allRecipes: BasicRecipe[] = generateBasicRecipes(40);
+
+	/** The query for the Search function. */
+	// http://localhost:3000 => ""
+	// http://localhost:3000/?search => ""
+	// http://localhost:3000/?search=ok => "ok"
+	// http://localhost:3000/?search=some search query => "some search query"
+	let query = $page.url.searchParams.get('search') ?? '';
 
 	let searchResults: BasicRecipe[] = [];
 	function onSearch(
@@ -83,7 +91,7 @@
 	</div>
 
 	<div class="mb-10">
-		<Search {searchResults} on:search={onSearch} />
+		<Search {searchResults} {query} on:search={onSearch} />
 	</div>
 
 	<div class="flex flex-row justify-center gap-[120px]">
