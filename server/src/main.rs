@@ -1,5 +1,6 @@
 use crate::v1::utils::WeeklyRecipeGetter;
-use actix_web::{web, App as ActixApp, HttpServer};
+use actix_cors::Cors;
+use actix_web::{http, web, App as ActixApp, HttpServer};
 use clap::{App as ClapApp, Arg};
 use std::sync::{Arc, Mutex};
 
@@ -146,7 +147,13 @@ async fn main() -> std::io::Result<()> {
     // Start the web server
     println!("Starting Actix-web server on http://0.0.0.0:{}", port);
     HttpServer::new(move || {
+        // let cors = Cors::default()
+        //     .allowed_origin("http://localhost:3000")
+        //     .max_age(3600);
+        let cors = Cors::permissive();
+
         ActixApp::new()
+            .wrap(cors)
             .app_data(web::Data::new(env))
             .app_data(web::Data::new(client.clone()))
             .app_data(web::Data::new(weekly_recipe_getter.clone()))

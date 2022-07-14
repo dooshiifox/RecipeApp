@@ -3,7 +3,7 @@ use crate::v1::utils::*;
 use actix_api_macros::*;
 use actix_web::{get, web, Responder};
 use std::sync::{Arc, Mutex};
-use tracing::{error, trace};
+use tracing::error;
 
 #[derive(ActixApiEnum)]
 enum WeeklyRecipeResponse {

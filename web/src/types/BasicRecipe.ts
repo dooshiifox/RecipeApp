@@ -1,12 +1,15 @@
 import storage from '../store/localStorage';
+import type { DateMs } from './date';
 import type { Gradient } from './gradient';
 import type { Nutrient } from './nutrient';
 import type { Uuid } from './uuid';
 
 export class BasicRecipe {
 	id: Uuid;
+	dateAdded: DateMs;
 	url: string;
 	title: string;
+	isWeekly: boolean;
 	image: string;
 	nutrients: Nutrient[];
 	timeToCook: number;
@@ -15,8 +18,10 @@ export class BasicRecipe {
 
 	constructor(
 		id: string,
+		dateAdded: DateMs,
 		url: string,
 		title: string,
+		isWeekly: boolean,
 		image: string,
 		nutrients: Nutrient[],
 		timeToCook: number,
@@ -24,8 +29,10 @@ export class BasicRecipe {
 		gradient: Gradient
 	) {
 		this.id = id;
+		this.dateAdded = dateAdded;
 		this.url = url;
 		this.title = title;
+		this.isWeekly = isWeekly;
 		this.image = image;
 		this.nutrients = nutrients;
 		this.timeToCook = timeToCook;

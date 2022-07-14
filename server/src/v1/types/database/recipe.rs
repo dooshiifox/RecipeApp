@@ -1,5 +1,6 @@
 use crate::v1::types::database::*;
 use crate::v1::types::*;
+use heck::ToKebabCase;
 
 /// The database Recipe type that is sent to/used by the database.
 ///
@@ -23,6 +24,8 @@ pub struct Recipe {
     pub credits: Option<Formattable>,
     /// The date the recipe went weekly. None if never was weekly.
     pub weekly_timestamp: Option<Date>,
+    /// The short title of the recipe, kebab-cased.
+    pub short: String,
     /// The title of the recipe. Max 80 chars.
     pub title: String,
     /// A list of common nutrients found in the recipe. Should be 1-3 long
@@ -33,6 +36,8 @@ pub struct Recipe {
     pub servings: u16,
     /// The URL to the recipe image. Should be on S3
     pub image: Url,
+    /// The gradient of the recipe.
+    pub gradient: Gradient,
     /// The ingredients of the recipe. Max 80chars per ingredient.
     pub ingredients: Vec<String>,
     /// The recipe's method
@@ -84,6 +89,8 @@ pub struct RecipeBuilder {
     credits: Option<Formattable>,
     /// The date the recipe went weekly. None if never was weekly.
     weekly_timestamp: Option<Date>,
+    /// The short title of the recipe, kebab-cased.
+    short: Option<String>,
     /// The title of the recipe. Max 80 chars.
     title: Option<String>,
     /// A list of common nutrients found in the recipe. Should be 1-3 long
@@ -94,6 +101,8 @@ pub struct RecipeBuilder {
     servings: Option<u16>,
     /// The URL to the recipe image. Should be on S3
     image: Option<Url>,
+    /// The gradient of the recipe.
+    gradient: Option<Gradient>,
     /// The ingredients of the recipe. Max 80chars per ingredient.
     ingredients: Vec<String>,
     /// The recipe's method
@@ -114,6 +123,10 @@ impl RecipeBuilder {
             return Err("Recipe must have at least one ingredient".to_string());
         }
 
+        let short = self
+            .get_short()
+            .ok_or_else(|| "No short set for recipe.".to_string())?;
+
         Ok(Recipe {
             uuid: self.uuid.unwrap_or_else(Uuid::random),
             date_added: self.date_added.unwrap_or_else(Date::now),
@@ -124,6 +137,7 @@ impl RecipeBuilder {
             title: self
                 .title
                 .ok_or_else(|| "No title set for recipe.".to_string())?,
+            short,
             nutrients: self.nutrients,
             time_to_cook: self
                 .time_to_cook
@@ -134,6 +148,9 @@ impl RecipeBuilder {
             image: self
                 .image
                 .ok_or_else(|| "No image set for recipe.".to_string())?,
+            gradient: self
+                .gradient
+                .ok_or_else(|| "No gradient set for recipe.".to_string())?,
             ingredients: self.ingredients,
             method: self
                 .method
@@ -142,6 +159,15 @@ impl RecipeBuilder {
                 .quiz
                 .ok_or_else(|| "No quiz set for recipe.".to_string())?,
         })
+    }
+
+    /// Returns the current Short of the recipe.
+    pub fn get_short(&self) -> Option<String> {
+        if let Some(short) = &self.short {
+            Some(short.to_string())
+        } else {
+            self.title.as_ref().map(|title| title.to_kebab_case())
+        }
     }
 
     /// Set the UUID of the recipe.
@@ -184,11 +210,19 @@ impl RecipeBuilder {
         self.weekly_timestamp = Some(weekly_timestamp);
         self
     }
+
     /// Sets the title of the recipe.
     pub fn title(mut self, title: String) -> Self {
         self.title = Some(title);
         self
     }
+
+    /// Sets the short title of the recipe.
+    pub fn short(mut self, short: String) -> Self {
+        self.short = Some(short);
+        self
+    }
+
     /// Sets the list of nutrients found in the recipe.
     pub fn nutrients(mut self, nutrients: Vec<Nutrient>) -> Self {
         self.nutrients = nutrients;
@@ -215,6 +249,13 @@ impl RecipeBuilder {
         self.image = Some(image);
         self
     }
+
+    /// Sets the gradient of the recipe.
+    pub fn gradient(mut self, gradient: Gradient) -> Self {
+        self.gradient = Some(gradient);
+        self
+    }
+
     /// Sets the ingredients of the recipe.
     pub fn ingredients(mut self, ingredients: Vec<String>) -> Self {
         self.ingredients = ingredients;

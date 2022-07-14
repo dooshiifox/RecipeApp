@@ -34,8 +34,10 @@ export function generateBasicRecipe(): BasicRecipe {
 
 	const basicRecipe = new BasicRecipe(
 		randomUuid(),
+		Date.now(),
 		'/recipe/' + titleKebab,
 		title,
+		false,
 		getRandomImage(),
 		randomNutrients(),
 		randomTimeToCook(),

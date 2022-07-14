@@ -24,6 +24,8 @@ pub struct Recipe {
     pub servings: u16,
     /// The URL to the image of the recipe.
     pub image: Url,
+    /// The gradient of the recipe.
+    pub gradient: Gradient,
     /// The ingredients of the recipe.
     pub ingredients: Vec<String>,
     /// The recipe's method
@@ -46,6 +48,7 @@ impl Recipe {
             time_to_cook: recipe.time_to_cook,
             servings: recipe.servings,
             image: recipe.image.clone(),
+            gradient: recipe.gradient.clone(),
             ingredients: recipe.ingredients.clone(),
             method: recipe.method.clone(),
         }

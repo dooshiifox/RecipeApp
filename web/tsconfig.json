@@ -18,6 +18,8 @@
 			"$store/*": ["src/store/*"],
 			"$types": ["src/types"],
 			"$types/*": ["src/types/*"],
+			"$utils": ["src/utils"],
+			"$utils/*": ["src/utils/*"],
 			"$lib": ["src/lib"],
 			"$lib/*": ["src/lib/*"],
 			"$icons": ["src/lib/assets/icons/rounded"],

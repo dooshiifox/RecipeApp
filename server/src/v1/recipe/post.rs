@@ -6,7 +6,8 @@ use mongodb::bson::doc;
 use tracing::{error, trace};
 
 #[derive(ActixApiEnum)]
-enum BasicRecipeResponse {
+#[allow(clippy::large_enum_variant)]
+enum RecipeResponse {
     /// If the insertion was successful, returns the newly updated [`Recipe`].
     ///
     /// [`Recipe`]: crate::v1::types::database::Recipe
@@ -41,7 +42,7 @@ pub async fn insert(
     // access to insert data.
     if check_user_auth(req).is_err() {
         trace!("Invalid authorization attempt.");
-        return BasicRecipeResponse::InvalidAuth;
+        return RecipeResponse::InvalidAuth;
     }
 
     // Convert the request recipe to a database recipe.
@@ -52,7 +53,7 @@ pub async fn insert(
                 "Could not insert recipe due to invalid request body: {}",
                 err
             );
-            return BasicRecipeResponse::InvalidRequest(err);
+            return RecipeResponse::InvalidRequest(err);
         }
     };
 
@@ -68,7 +69,7 @@ pub async fn insert(
     if let Err(e) = result {
         let error_uuid = Uuid::random();
         error!("Error UUID: {}\n{:?}", error_uuid, e);
-        return BasicRecipeResponse::InternalError(error_uuid);
+        return RecipeResponse::InternalError(error_uuid);
     }
 
     // Get the recipe from the database.
@@ -83,7 +84,7 @@ pub async fn insert(
         Err(e) => {
             let error_uuid = Uuid::random();
             error!("Error UUID: {}\n{:?}", error_uuid, e);
-            return BasicRecipeResponse::InternalError(error_uuid);
+            return RecipeResponse::InternalError(error_uuid);
         }
         _ => {
             let error_uuid = Uuid::random();
@@ -91,10 +92,10 @@ pub async fn insert(
                 "Error UUID: {}\nCould not find entry in database after inserting: {}",
                 error_uuid, recipe_uuid
             );
-            return BasicRecipeResponse::InternalError(error_uuid);
+            return RecipeResponse::InternalError(error_uuid);
         }
     };
 
     trace!("Successfully inserted/updated recipe {}.", recipe_uuid);
-    BasicRecipeResponse::Success(recipe)
+    RecipeResponse::Success(recipe)
 }

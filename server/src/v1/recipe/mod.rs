@@ -20,13 +20,15 @@ pub struct RequestRecipe {
     becomes_public: Option<Date>,
     /// The staff who helped make this recipe.
     authors: Option<Vec<Uuid>>,
-    /// A short string crediting the creators of the recipe. Max 400 chars.
+    /// A short string crediting the creators of the recipe.
     credits: Option<Formattable>,
-    /// The date the recipe went weekly. None if never was set_log_levelweekly.
+    /// The date the recipe went weekly. None if never was weekly.
     weekly_timestamp: Option<Date>,
-    /// The title of the recipe. Max 80 chars.
+    /// The title of the recipe.
     title: Option<String>,
-    /// A list of common nutrients found in the recipe. Should be 1-3 long
+    /// The short title of the recipe.
+    short: Option<String>,
+    /// A list of common nutrients found in the recipe.
     nutrients: Option<Vec<SerdeStringNutrient>>,
     /// The time to cook the recipe, in minutes
     time_to_cook: Option<u16>,
@@ -34,7 +36,9 @@ pub struct RequestRecipe {
     servings: Option<u16>,
     /// The URL to the recipe image. Should be on S3
     image: Option<Url>,
-    /// The ingredients of the recipe. Max 80chars per ingredient.
+    /// The gradient of the recipe.
+    gradient: Option<Gradient>,
+    /// The ingredients of the recipe.
     ingredients: Option<Vec<String>>,
     /// The recipe's method
     method: Option<database::Method>,
@@ -66,6 +70,7 @@ impl RequestRecipe {
         if_some!(credits, credits);
         if_some!(weekly_timestamp, weekly_timestamp);
         if_some!(title, title);
+        if_some!(short, short);
         if_some!(time_to_cook, time_to_cook);
         if_some!(servings, servings);
         if_some!(image, image);

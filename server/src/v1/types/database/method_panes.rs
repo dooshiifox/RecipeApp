@@ -5,6 +5,7 @@ use crate::v1::types::*;
 /// [`SubStep`]: crate::v1::types::database::SubStep
 /// [`Method`]: crate::v1::types::database::Method
 #[derive(Debug, serde::Serialize, serde::Deserialize, Clone, PartialEq, Eq, Default)]
+#[serde(rename_all = "camelCase")]
 pub struct Warning {
     /// The title of the warning.
     title: String,
@@ -44,6 +45,7 @@ impl Warning {
 /// [`SubStep`]: crate::v1::types::database::SubStep
 /// [`Method`]: crate::v1::types::database::Method
 #[derive(Debug, serde::Serialize, serde::Deserialize, Clone, PartialEq, Eq, Default)]
+#[serde(rename_all = "camelCase")]
 pub struct Info {
     /// The title of the info.
     title: String,

@@ -13,6 +13,10 @@ pub struct BasicRecipe {
     pub date_added: Date,
     /// Whether the recipe is *currently* the weekly recipe.
     pub is_weekly: bool,
+    /// The short name of the recipe, used in the URL.
+    ///
+    /// e.g., `/recipe/chicken-tikka-masala`, `chicken-tikka-masala` is this string.
+    pub short: String,
     /// The title of the recipe. Should be max 80 characters.
     pub title: String,
     /// The nutrients found in the recipe. Should be 1 - 3 long.
@@ -23,6 +27,8 @@ pub struct BasicRecipe {
     pub servings: u16,
     /// The URL to the image of the recipe.
     pub image: Url,
+    /// The gradient of the recipe.
+    pub gradient: Gradient,
 }
 
 impl BasicRecipe {
@@ -34,6 +40,7 @@ impl BasicRecipe {
             // was added to the database
             date_added: recipe.becomes_public,
             is_weekly: recipe.is_weekly(),
+            short: recipe.short.clone(),
             title: recipe.title.clone(),
             // Convert Nutrient to SerdeStringNutrient so when sent to the
             // client it will be serialized as a string.
@@ -41,6 +48,7 @@ impl BasicRecipe {
             time_to_cook: recipe.time_to_cook,
             servings: recipe.servings,
             image: recipe.image.clone(),
+            gradient: recipe.gradient.clone(),
         }
     }
 }

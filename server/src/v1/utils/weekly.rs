@@ -3,7 +3,7 @@ use crate::v1::types::Date;
 use crate::v1::utils::collection::*;
 use mongodb::options::FindOneOptions;
 use mongodb::{bson::doc, Client};
-use tracing::{debug, error, trace};
+use tracing::{error, trace};
 
 /// Expires after an hour. This needs to be in milliseconds.
 const CACHE_EXPIRATION: u64 = 1000 * 60 * 60;
@@ -35,7 +35,8 @@ impl WeeklyRecipeGetter {
     /// If the weekly recipe has not been retrieved from the database or the
     /// cache has expired, will retrieve the weekly recipe from the database.
     /// Else, will return what is cached.
-    pub async fn get(&mut self, client: &Client) -> Result<&Recipe, String> {
+    // Explicit lifetimes here because *sometimes* errors without them for whatever reason..?
+    pub async fn get<'a, 'b>(&'a mut self, client: &'b Client) -> Result<&'a Recipe, String> {
         // If the weekly recipe has not been retrieved yet, retrieve it.
         if self.recipe.is_none() || self.is_cache_expired() {
             trace!("Weekly cache expired.");
@@ -61,7 +62,7 @@ impl WeeklyRecipeGetter {
 
         // Get the max weekly timestamp
         let find_options = FindOneOptions::builder()
-            .sort(doc! {"weekly_timestamp": -1})
+            .sort(doc! {"weeklyTimestamp": -1})
             .build();
         let recipe = db
             .find_one(

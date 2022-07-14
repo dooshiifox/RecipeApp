@@ -66,6 +66,7 @@ const config = {
 			$faked: 'src/faked',
 			$store: 'src/store',
 			$types: 'src/types',
+			$utils: 'src/utils',
 			$icons: 'src/lib/assets/icons/rounded'
 		},
 

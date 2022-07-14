@@ -11,11 +11,35 @@
 	import FoundNothing from '$lib/homepage/FoundNothing.svelte';
 
 	import generateBasicRecipes from '$faked/BasicRecipe';
-	import { BasicRecipe } from '$types/BasicRecipe';
-	import { randomUuid } from '$src/faked/random';
+	import type { BasicRecipe } from '$types/BasicRecipe';
 	import { page } from '$app/stores';
+	import { get } from '$utils/fetch';
+	import { onMount } from 'svelte';
 
-	let allRecipes: BasicRecipe[] = generateBasicRecipes(40);
+	let weeklyRecipe: BasicRecipe | undefined;
+	async function getWeeklyRecipe(): Promise<BasicRecipe> {
+		// Return from stored if available.
+		if (weeklyRecipe) return weeklyRecipe;
+
+		return get<BasicRecipe>('/weekly')
+			.catch((e) => {
+				return Promise.reject(
+					'Server returned an unexpected value when retrieving weekly: ' + e.toString()
+				);
+			})
+			.then((resp) => {
+				if (resp.success) {
+					weeklyRecipe = resp.data;
+					return weeklyRecipe;
+				} else {
+					return Promise.reject('Server could not retrieve weekly: ' + resp.error);
+				}
+			});
+	}
+
+	let allRecipes: BasicRecipe[] = [];
+	let savedRecipes: BasicRecipe[] = [];
+	let ratedRecipes: BasicRecipe[] = [];
 
 	/** The query for the Search function. */
 	// http://localhost:3000 => ""
@@ -24,6 +48,7 @@
 	// http://localhost:3000/?search=some search query => "some search query"
 	let query = $page.url.searchParams.get('search') ?? '';
 
+	/** The recipes that match the query. */
 	let searchResults: BasicRecipe[] = [];
 	function onSearch(
 		e: CustomEvent<{
@@ -60,10 +85,13 @@
 			.slice(0, resultsPerPage);
 	}
 
-	let savedRecipes = allRecipes.filter((recipe) => recipe.bookmarked);
-	let ratedRecipes = allRecipes
-		.filter((recipe) => recipe.rating !== undefined)
-		.sort((a, b) => (b.rating as number) - (a.rating as number));
+	onMount(() => {
+		allRecipes = generateBasicRecipes(40);
+		savedRecipes = allRecipes.filter((recipe) => recipe.bookmarked);
+		ratedRecipes = allRecipes
+			.filter((recipe) => recipe.rating !== undefined)
+			.sort((a, b) => (b.rating as number) - (a.rating as number));
+	});
 </script>
 
 <svelte:head>
@@ -72,19 +100,7 @@
 </svelte:head>
 
 <section>
-	<RecipeHeader
-		isWeekly
-		recipe={new BasicRecipe(
-			randomUuid(),
-			'home-made-omelette',
-			'Home-Made Omelette',
-			'/images/omelette.jpg',
-			['Vitamin A', 'Iron'],
-			15,
-			1,
-			['#a6e8f4', '#a6b4f4']
-		)}
-	/>
+	<RecipeHeader recipeFn={getWeeklyRecipe} />
 
 	<div class="w-[720px] my-12 mx-auto">
 		<Level />
