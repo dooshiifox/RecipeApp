@@ -7,7 +7,7 @@ import type { Uuid } from './uuid';
 export class BasicRecipe {
 	id: Uuid;
 	dateAdded: DateMs;
-	url: string;
+	short: string;
 	title: string;
 	isWeekly: boolean;
 	image: string;
@@ -19,7 +19,7 @@ export class BasicRecipe {
 	constructor(
 		id: string,
 		dateAdded: DateMs,
-		url: string,
+		short: string,
 		title: string,
 		isWeekly: boolean,
 		image: string,
@@ -30,7 +30,7 @@ export class BasicRecipe {
 	) {
 		this.id = id;
 		this.dateAdded = dateAdded;
-		this.url = url;
+		this.short = short;
 		this.title = title;
 		this.isWeekly = isWeekly;
 		this.image = image;

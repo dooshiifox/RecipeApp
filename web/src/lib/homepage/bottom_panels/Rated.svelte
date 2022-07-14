@@ -32,7 +32,7 @@
 		{#each recipes as recipe, i}
 			<!-- Reverse order of image and content if even. -->
 			<a
-				href={recipe.url}
+				href={recipe.short}
 				class="flex {i % 2
 					? 'flex-row-reverse'
 					: 'flex-row'} rounded-2xl bg-white/10 hover:bg-black/10 group transition-colors duration-100"

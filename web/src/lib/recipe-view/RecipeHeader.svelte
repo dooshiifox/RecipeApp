@@ -48,17 +48,25 @@
 			</GradientBackground>
 		</div>
 	{:else}
-		<div transition:fade={{ duration: 50 }}>
-			<GradientBackground
-				gradient={recipe.gradient}
-				class="w-full h-80 grid grid-cols-2 justify-items-end"
-			>
+		<a
+			transition:fade={{ duration: 50 }}
+			class="group h-80 block hover:h-[340px] transition-[height]"
+			href="/recipe/{recipe.short}"
+		>
+			<GradientBackground gradient={recipe.gradient} class="w-full h-full grid grid-cols-2">
 				<img
 					src={recipe.image}
 					alt="Image of {recipe.title}"
-					class="-skew-x-2 h-80 object-cover aspect-[7/4] rounded-3xl"
+					class="justify-self-end -skew-x-2 h-80 group-hover:h-[340px] transition-[height] object-cover aspect-[7/4] rounded-3xl"
 				/>
-				<div class="flex flex-col h-full pt-10 pl-8 justify-self-start -skew-y-2">
+				<!-- Twists from upright and flat to the same angle as
+					the image when hovered. Also moves 16px right due to the
+					padding shift.
+					Giving a width is required so a scrollbar does not appear.
+				-->
+				<div
+					class="self-center w-11/12 flex flex-col py-10 pl-8 group-hover:pl-12 -skew-y-2 group-hover:skew-y-0 group-hover:-skew-x-2 transition-[padding-left,transform]"
+				>
 					{#if recipe.isWeekly}
 						<span class="text-2xl font-bold text-black/40 leading-none">Weekly Recipe</span>
 					{/if}
@@ -77,6 +85,6 @@
 					<Ratings stars={recipe.rating} class="mt-4" starClass="fill-black/70 w-8 h-8 -mr-1" />
 				</div>
 			</GradientBackground>
-		</div>
+		</a>
 	{/if}
 </div>

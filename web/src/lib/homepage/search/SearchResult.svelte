@@ -17,7 +17,7 @@
 	}
 </script>
 
-<a class="block group w-full h-[120px] hover:scale-[1.03] transition-transform" href={recipe.url}>
+<a class="block group w-full h-[120px] hover:scale-[1.03] transition-transform" href={recipe.short}>
 	<GradientBackground
 		gradient={recipe.gradient}
 		class="flex h-full w-full rounded-2xl group-hover:brightness-105 transition-[filter]"
