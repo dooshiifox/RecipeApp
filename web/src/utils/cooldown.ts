@@ -40,7 +40,6 @@ export class Cooldown {
 	 * @returns True if the cooldown was used, false otherwise.
 	 */
 	use(): boolean {
-		console.debug(this);
 		if (this.isReady()) {
 			// Perform the callback before the timer starts.
 			this.callback();

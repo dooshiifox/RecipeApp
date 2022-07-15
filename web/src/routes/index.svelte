@@ -11,33 +11,13 @@
 	import FoundNothing from '$lib/homepage/FoundNothing.svelte';
 
 	import generateBasicRecipes from '$faked/BasicRecipe';
-	import type { BasicRecipe } from '$types/BasicRecipe';
+	import { BasicRecipe } from '$types/BasicRecipe';
 	import { page } from '$app/stores';
-	import { get } from '$utils/fetch';
+	import type { APIErrorResponse } from '$utils/fetch';
 	import { onMount } from 'svelte';
+	import { getBookmarks, setBookmarks } from '$store/bookmarks';
+	import { getRatings, setRatings } from '$store/ratings';
 
-	let weeklyRecipe: BasicRecipe | undefined;
-	async function getWeeklyRecipe(): Promise<BasicRecipe> {
-		// Return from stored if available.
-		if (weeklyRecipe) return weeklyRecipe;
-
-		return get<BasicRecipe>('/weekly')
-			.catch((e) => {
-				return Promise.reject(
-					'Server returned an unexpected value when retrieving weekly: ' + e.toString()
-				);
-			})
-			.then((resp) => {
-				if (resp.success) {
-					weeklyRecipe = resp.data;
-					return weeklyRecipe;
-				} else {
-					return Promise.reject('Server could not retrieve weekly: ' + resp.error);
-				}
-			});
-	}
-
-	let allRecipes: BasicRecipe[] = [];
 	let savedRecipes: BasicRecipe[] = [];
 	let ratedRecipes: BasicRecipe[] = [];
 
@@ -57,41 +37,85 @@
 			resultsPerPage: number;
 		}>
 	) {
-		const nutrientFilters = e.detail.selectedFilters['Nutrients'] ?? [];
-		const lowercaseNutrients = new Set(
-			[...nutrientFilters].map((nutrient) => nutrient.toLowerCase())
-		);
+		// const nutrientFilters = e.detail.selectedFilters['Nutrients'] ?? [];
+		// const lowercaseNutrients = new Set(
+		// 	[...nutrientFilters].map((nutrient) => nutrient.toLowerCase())
+		// );
 
-		const query = e.detail.query && new RegExp(e.detail.query.split('').join('.*'));
-		const resultsPerPage = e.detail.resultsPerPage;
+		// const query = e.detail.query && new RegExp(e.detail.query.split('').join('.*'));
+		// const resultsPerPage = e.detail.resultsPerPage;
 
-		searchResults = allRecipes
-			.filter((recipe) => {
-				if (lowercaseNutrients.size !== 0) {
-					// Iterate over every nutrient in the recipe,
-					// checking if *any* are in the nutrient filter.
-					// If so, the recipe is valid. If not, return false as it isn't.
-					if (!recipe.nutrients.some((nutrient) => lowercaseNutrients.has(nutrient.toLowerCase())))
-						return false;
-				}
+		// searchResults = allRecipes
+		// 	.filter((recipe) => {
+		// 		if (lowercaseNutrients.size !== 0) {
+		// 			// Iterate over every nutrient in the recipe,
+		// 			// checking if *any* are in the nutrient filter.
+		// 			// If so, the recipe is valid. If not, return false as it isn't.
+		// 			if (!recipe.nutrients.some((nutrient) => lowercaseNutrients.has(nutrient.toLowerCase())))
+		// 				return false;
+		// 		}
 
-				if (query) {
-					// Check if the recipe name contains the query
-					if (!recipe.title.toLowerCase().match(query)) return false;
-				}
+		// 		if (query) {
+		// 			// Check if the recipe name contains the query
+		// 			if (!recipe.title.toLowerCase().match(query)) return false;
+		// 		}
 
-				return true;
-			})
-			.slice(0, resultsPerPage);
+		// 		return true;
+		// 	})
+		// 	.slice(0, resultsPerPage);
+		return [];
 	}
 
 	onMount(() => {
-		allRecipes = generateBasicRecipes(40);
-		savedRecipes = allRecipes.filter((recipe) => recipe.bookmarked);
-		ratedRecipes = allRecipes
-			.filter((recipe) => recipe.rating !== undefined)
-			.sort((a, b) => (b.rating as number) - (a.rating as number));
+		let bookmarkSet = getBookmarks();
+		if (bookmarkSet) {
+			getAndAddRecipes(Array.from([...(bookmarkSet.values() || [])]), (recipe) => {
+				savedRecipes.push(recipe);
+			});
+		}
+
+		let ratings = getRatings();
+		if (ratings) {
+			// Sort the recipes by highest rated and get their ids.
+			let sortedRatings = Object.entries(ratings)
+				.sort((a, b) => b[1] - a[1])
+				.map(([id, _]) => {
+					return id;
+				});
+
+			getAndAddRecipes(sortedRatings || [], (recipe) => {
+				savedRecipes.push(recipe);
+			});
+		}
 	});
+
+	function getAndAddRecipes(ids: string[], save: (recipe: BasicRecipe) => void) {
+		// Gets the first 3 recipes from IDs.
+		// If any recipe in that 3 encounters errors, the next recipe from
+		// ids will be fetched, until either we have 3 recipes or we run out of ids.
+		// The first 3 must be checked in parallel.
+		// The output should be in the order given.
+
+		const getSingle = () => {
+			const id = ids.shift();
+			if (id === undefined) return;
+
+			BasicRecipe.getById(id).then(
+				(recipe) => {
+					save(recipe);
+				},
+				(e: APIErrorResponse<APIErrorResponse['error']>['error']) => {
+					console.error(e);
+					getSingle();
+				}
+			);
+		};
+
+		// Fetch the first 3
+		for (let i = 0; i < 3; i++) {
+			getSingle();
+		}
+	}
 </script>
 
 <svelte:head>
@@ -100,7 +124,7 @@
 </svelte:head>
 
 <section>
-	<RecipeHeader recipeFn={getWeeklyRecipe} />
+	<RecipeHeader recipeFn={BasicRecipe.getWeekly} />
 
 	<div class="w-[720px] my-12 mx-auto">
 		<Level />

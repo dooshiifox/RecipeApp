@@ -32,18 +32,18 @@ export function generateBasicRecipe(): BasicRecipe {
 	// e.g., Sour Bacon, Rice, and Cabbage on Rice => sour-bacon-rice-and-cabbage-on-rice
 	const titleKebab = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
-	const basicRecipe = new BasicRecipe(
-		randomUuid(),
-		Date.now(),
-		'/recipe/' + titleKebab,
+	const basicRecipe = new BasicRecipe({
+		id: randomUuid(),
+		dateAdded: Date.now(),
+		short: '/recipe/' + titleKebab,
 		title,
-		false,
-		getRandomImage(),
-		randomNutrients(),
-		randomTimeToCook(),
-		randomServings(),
-		randomGradient()
-	);
+		isWeekly: false,
+		image: getRandomImage(),
+		nutrients: randomNutrients(),
+		timeToCook: randomTimeToCook(),
+		servings: randomServings(),
+		gradient: randomGradient()
+	});
 
 	if (browser) {
 		// Random rating 0-5 with 50% chance for no set rating.

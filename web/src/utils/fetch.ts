@@ -11,11 +11,12 @@ export interface APISuccessResponse<T> {
 }
 
 /** A failed response from the server. */
-export interface APIErrorResponse {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface APIErrorResponse<T = any> {
 	success: false;
 	error?: {
 		message?: string;
-		data?: any;
+		data?: T;
 	};
 }
 
@@ -62,7 +63,18 @@ export enum ReqMethod {
 	PATCH = 'PATCH'
 }
 
-/** Interacts with the given API endpoint. */
+/** Interacts with the given API endpoint.
+ *
+ * Rejects with an error if the server returns an error or something that isn't
+ * a generic API response type.
+ *
+ * Resolves with the response if the server returns a VALID API RESPONSE.
+ * The caller must check themselves if the response is a success or error\
+ * using the `success` property.
+ *
+ * Resolves: `APIResponse<T>`
+ * Rejects: `APIErrorResponse`
+ */
 export async function req<T>(endpoint: string, req?: RequestInit): Promise<APIResponse<T>> {
 	// Remove the leading slash from the endpoint
 	endpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
@@ -73,31 +85,45 @@ export async function req<T>(endpoint: string, req?: RequestInit): Promise<APIRe
 		throw new Error('GET and HEAD requests cannot have a body');
 	}
 
-	const response = await fetch(
+	const response: Response | false = await fetch(
 		url,
 		req ?? {
 			headers: {
 				'Content-Type': 'application/json'
 			}
 		}
-	);
+	).catch(() => false);
+
+	if (!response) {
+		return Promise.reject({
+			success: false,
+			error: {
+				message: 'Failed to connect to the server'
+			}
+		});
+	}
+
+	// Clone the response.
+	// In case of an error, the text must be read, but the body cannot be read
+	// twice from a response (in this case, json() and text()).
+	// Therefore, we need to clone.
+	// https://stackoverflow.com/questions/34786358/what-does-this-error-mean-uncaught-typeerror-already-read#comment86228774_35000918
+	const response2 = response.clone();
 
 	// Check for a successful response
 	return response.json().then(
-		(json) => {
-			if (json.success) {
-				return json;
-			} else {
-				throw json;
-			}
+		(json: APIResponse<T>) => {
+			return Promise.resolve(json);
 		},
-		() =>
-			Promise.reject({
+		() => {
+			return Promise.reject({
 				success: false,
 				error: {
-					message: response.text()
+					message: 'Invalid JSON response',
+					data: response2.text()
 				}
-			})
+			});
+		}
 	);
 }
 
@@ -112,9 +138,9 @@ export async function get<T>(endpoint: string): Promise<APIResponse<T>> {
 }
 
 /** Make a POST request to a specific API endpoint. */
-export async function post<T>(endpoint: string, body: any): Promise<APIResponse<T>> {
+export async function post<T>(endpoint: string, body: BodyInit): Promise<APIResponse<T>> {
 	return req(endpoint, {
 		method: ReqMethod.POST,
-		body: JSON.stringify(body)
+		body
 	});
 }

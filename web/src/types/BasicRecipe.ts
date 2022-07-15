@@ -1,10 +1,31 @@
-import storage from '../store/localStorage';
+import { get, type APIErrorResponse } from '$utils/fetch';
+import { getBookmarks, setBookmarks } from '$store/bookmarks';
+import { getRatings, setRatings } from '$store/ratings';
 import type { DateMs } from './date';
 import type { Gradient } from './gradient';
 import type { Nutrient } from './nutrient';
 import type { Uuid } from './uuid';
 
-export class BasicRecipe {
+/** The weekly recipe cacher. */
+let weekly: BasicRecipe | null = null;
+
+/** The BasicRecipe cacher. */
+const cachedRecipes: Map<Uuid, BasicRecipe> = new Map();
+
+export interface BasicRecipeConstructor {
+	id: Uuid;
+	dateAdded: DateMs;
+	short: string;
+	title: string;
+	isWeekly: boolean;
+	image: string;
+	nutrients: Nutrient[];
+	timeToCook: number;
+	servings: number;
+	gradient: Gradient;
+}
+
+export class BasicRecipe implements BasicRecipeConstructor {
 	id: Uuid;
 	dateAdded: DateMs;
 	short: string;
@@ -16,78 +37,111 @@ export class BasicRecipe {
 	servings: number;
 	gradient: Gradient;
 
-	constructor(
-		id: string,
-		dateAdded: DateMs,
-		short: string,
-		title: string,
-		isWeekly: boolean,
-		image: string,
-		nutrients: Nutrient[],
-		timeToCook: number,
-		servings: number,
-		gradient: Gradient
-	) {
-		this.id = id;
-		this.dateAdded = dateAdded;
-		this.short = short;
-		this.title = title;
-		this.isWeekly = isWeekly;
-		this.image = image;
-		this.nutrients = nutrients;
-		this.timeToCook = timeToCook;
-		this.servings = servings;
-		this.gradient = gradient;
+	constructor(c: BasicRecipeConstructor) {
+		this.id = c.id;
+		this.dateAdded = c.dateAdded;
+		this.short = c.short;
+		this.title = c.title;
+		this.isWeekly = c.isWeekly;
+		this.image = c.image;
+		this.nutrients = c.nutrients;
+		this.timeToCook = c.timeToCook;
+		this.servings = c.servings;
+		this.gradient = c.gradient;
+	}
+
+	/** Gets a BasicRecipe from the API by its UUID. */
+	static getById(id: string): Promise<BasicRecipe> {
+		const cached = cachedRecipes.get(id);
+		if (cached) {
+			return Promise.resolve(cached);
+		}
+
+		return BasicRecipe.getFromUrl(`/recipe-basic/${id}`).then(
+			(r) => {
+				// Cache the weekly recipe.
+				cachedRecipes.set(id, r);
+				return r;
+			},
+			(e) => {
+				return Promise.reject(e);
+			}
+		);
+	}
+
+	/** Gets the current weekly recipe. */
+	static getWeekly(): Promise<BasicRecipe> {
+		// Check if weekly has already been retrieved.
+		if (weekly) return Promise.resolve(weekly);
+
+		return BasicRecipe.getFromUrl('/weekly').then(
+			(r) => {
+				// Cache the weekly recipe.
+				weekly = r;
+				return weekly;
+			},
+			(e) => {
+				return Promise.reject(e);
+			}
+		);
+	}
+
+	/** Returns a new BasicRecipe by retrieving its information from
+	 * the given API endpoint.
+	 *
+	 * Resolves: `BasicRecipe`
+	 * Rejects: `{ message: string, data?: { message?: string, data?: any } }`
+	 */
+	static getFromUrl(url: string): Promise<BasicRecipe> {
+		return get<BasicRecipeConstructor>(url)
+			.catch((e: APIErrorResponse) => {
+				return Promise.reject({
+					message: `Server returned an unexpected value when retrieving \`${url}\``,
+					data: e.error
+				});
+			})
+			.then((resp) => {
+				if (resp.success) {
+					return new BasicRecipe(resp.data);
+				} else {
+					return Promise.reject({
+						message: `Server could not retrieve \`${url}\``,
+						data: resp.error
+					});
+				}
+			});
 	}
 
 	/** Whether the recipe is bookmarked or not. */
 	get bookmarked(): boolean {
-		if (storage === undefined) return false;
+		const bookmarks = getBookmarks();
 
-		// Check localstorage and see if its in the list.
-		let bookmarks = storage.bookmarks;
-		if (!bookmarks) {
-			storage.bookmarks = JSON.stringify([]);
-			return false;
+		if (bookmarks === undefined) {
+			throw new Error('Could not get bookmarked recipes');
 		}
-
-		bookmarks = JSON.parse(bookmarks);
-		if (bookmarks === null) {
-			throw new Error('Could not parse LocalStorage `bookmarks`');
-		}
-		return bookmarks.includes(this.id);
+		return bookmarks.has(this.id);
 	}
 
 	/** Updates the bookmark status of the recipe. */
 	set bookmarked(bookmarked: boolean) {
-		if (storage === undefined) return;
+		const bookmarks = getBookmarks();
+		if (bookmarks === undefined) return;
 
-		const bookmarks = JSON.parse(storage.bookmarks || '[]');
-		if (!Array.isArray(bookmarks)) {
-			throw new Error('Could not parse LocalStorage `bookmarks` as array');
-		}
-
-		const bookmarkSet = new Set(bookmarks as string[]);
 		if (bookmarked) {
-			bookmarkSet.add(this.id);
+			bookmarks.add(this.id);
 		} else {
-			bookmarkSet.delete(this.id);
+			bookmarks.delete(this.id);
 		}
-		storage.bookmarks = JSON.stringify([...bookmarkSet]);
+
+		setBookmarks(bookmarks);
 	}
 
 	/** The rating of the recipe. Undefined if not rated. */
 	get rating(): number | undefined {
-		if (storage === undefined) return;
+		const ratings = getRatings();
 
-		const rating = storage.ratings;
-		if (!rating) {
-			return undefined;
-		}
-
-		const ratings = JSON.parse(rating);
-		if (ratings === null) {
-			throw new Error('Could not parse LocalStorage `ratings`');
+		if (ratings === undefined) {
+			throw new Error('Could not get rated recipes');
 		}
 
 		return ratings[this.id];
@@ -95,12 +149,8 @@ export class BasicRecipe {
 
 	/** Updates the rating of the recipe. */
 	set rating(rating: number | undefined) {
-		if (storage === undefined) return;
-
-		const ratings = JSON.parse(storage.ratings || '{}');
-		if (!(ratings instanceof Object)) {
-			throw new Error('Could not parse LocalStorage `ratings` as object');
-		}
+		const ratings = getRatings();
+		if (ratings === undefined) return;
 
 		if (rating === undefined) {
 			delete ratings[this.id];
@@ -108,6 +158,6 @@ export class BasicRecipe {
 			ratings[this.id] = rating;
 		}
 
-		storage.ratings = JSON.stringify(ratings);
+		setRatings(ratings);
 	}
 }
