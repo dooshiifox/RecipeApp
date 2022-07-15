@@ -3,9 +3,10 @@ use std::fmt;
 /// A type representing a unique identifier, specifically UUIDv4.
 ///
 /// Internally is a [`u128`] as it allows for more efficient storage,
-/// however has several functions that make it easier to use as a `String`.
+/// however has several functions that make it easier to use as a [`String`].
 ///
 /// [`u128`]: https://doc.rust-lang.org/std/primitive.u128.html
+/// [`String`]: https://doc.rust-lang.org/std/string/struct.String.html
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Default)]
 pub struct Uuid(u128);
 

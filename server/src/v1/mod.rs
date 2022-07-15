@@ -2,6 +2,7 @@ use actix_web::Scope;
 
 mod index;
 mod recipe;
+mod search;
 pub mod types;
 pub mod utils;
 
@@ -12,4 +13,5 @@ pub fn init(scope: Scope) -> Scope {
         .service(recipe::get_basic::uuid)
         .service(recipe::get::uuid)
         .service(recipe::weekly::uuid)
+        .service(search::search::search)
 }

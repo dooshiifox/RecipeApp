@@ -1,7 +1,9 @@
+use crate::v1::utils::collection::{Collections, GetCollection};
 use crate::v1::utils::WeeklyRecipeGetter;
 use actix_cors::Cors;
-use actix_web::{http, web, App as ActixApp, HttpServer};
+use actix_web::{web, App as ActixApp, HttpServer};
 use clap::{App as ClapApp, Arg};
+use mongodb::bson::doc;
 use std::sync::{Arc, Mutex};
 
 mod envvar;
@@ -39,7 +41,21 @@ async fn create_db_client(env_file: &str) -> Result<mongodb::Client, String> {
 
     // Construct a client from those options.
     let client = mongodb::Client::with_options(client_options);
-    client.map_err(|_| "Could not create MongoDB client".to_string())
+    let client = client.map_err(|_| "Could not create MongoDB client".to_string())?;
+
+    // Create a text index on the recipes collection for the title.
+    client
+        .get_collection::<crate::v1::types::database::Recipe>(Collections::Recipes)
+        .create_index(
+            mongodb::IndexModel::builder()
+                .keys(doc! { "title": "text" })
+                .build(),
+            None,
+        )
+        .await
+        .map_err(|_| "Could not create text index on recipes collection".to_string())?;
+
+    Ok(client)
 }
 
 /// Set the log level of the application using `tracing`.

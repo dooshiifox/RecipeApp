@@ -36,7 +36,7 @@ impl WeeklyRecipeGetter {
     /// cache has expired, will retrieve the weekly recipe from the database.
     /// Else, will return what is cached.
     // Explicit lifetimes here because *sometimes* errors without them for whatever reason..?
-    pub async fn get<'a, 'b>(&'a mut self, client: &'b Client) -> Result<&'a Recipe, String> {
+    pub async fn get<'a, 'b: 'a>(&'a mut self, client: &'b Client) -> Result<&'a Recipe, String> {
         // If the weekly recipe has not been retrieved yet, retrieve it.
         if self.recipe.is_none() || self.is_cache_expired() {
             trace!("Weekly cache expired.");

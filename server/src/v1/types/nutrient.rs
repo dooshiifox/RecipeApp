@@ -146,6 +146,21 @@ impl From<Nutrient> for &str {
     }
 }
 
+impl From<Nutrient> for mongodb::bson::Bson {
+    fn from(nutrient: Nutrient) -> mongodb::bson::Bson {
+        mongodb::bson::Bson::Int32(nutrient.0 as i32)
+    }
+}
+
+impl From<mongodb::bson::Bson> for Nutrient {
+    fn from(bson: mongodb::bson::Bson) -> Nutrient {
+        match bson {
+            mongodb::bson::Bson::Int32(i) => Nutrient(i as u16),
+            _ => panic!("Invalid BSON type for Nutrient"),
+        }
+    }
+}
+
 /// A struct wrapping around `Nutrient` that can serialize and
 /// deserialize to and from a `String`.
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
