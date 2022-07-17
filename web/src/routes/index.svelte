@@ -163,7 +163,7 @@
 </svelte:head>
 
 <section>
-	<RecipeHeader recipeFn={BasicRecipe.getWeekly} />
+	<RecipeHeader recipeFn={BasicRecipe.getWeekly} hoverEffect={true} />
 
 	<div class="w-[720px] my-12 mx-auto">
 		<Level />
