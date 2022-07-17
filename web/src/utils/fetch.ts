@@ -108,7 +108,7 @@ export async function req<T>(endpoint: string, req?: RequestInit): Promise<APIRe
 	// twice from a response (in this case, json() and text()).
 	// Therefore, we need to clone.
 	// https://stackoverflow.com/questions/34786358/what-does-this-error-mean-uncaught-typeerror-already-read#comment86228774_35000918
-	const response2 = response.clone();
+	const response2 = await response.clone().text();
 
 	// Check for a successful response
 	return response.json().then(
@@ -120,7 +120,7 @@ export async function req<T>(endpoint: string, req?: RequestInit): Promise<APIRe
 				success: false,
 				error: {
 					message: 'Invalid JSON response',
-					data: response2.text()
+					data: response2
 				}
 			});
 		}
@@ -141,6 +141,9 @@ export async function get<T>(endpoint: string): Promise<APIResponse<T>> {
 export async function post<T>(endpoint: string, body: BodyInit): Promise<APIResponse<T>> {
 	return req(endpoint, {
 		method: ReqMethod.POST,
+		headers: {
+			'Content-Type': 'application/json'
+		},
 		body
 	});
 }

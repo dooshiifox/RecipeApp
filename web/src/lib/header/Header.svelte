@@ -4,7 +4,6 @@
 	import SearchIcon from '$icons/search.svg?component';
 	import getLevelingInfo from '$store/level';
 	import { browser } from '$app/env';
-	import { goto } from '$app/navigation';
 
 	// Only set level if in browser mode. Else leave as placeholder.
 	let level: number | string = '?';

@@ -10,10 +10,9 @@
 	import Rated from '$lib/homepage/bottom_panels/Rated.svelte';
 	import FoundNothing from '$lib/homepage/FoundNothing.svelte';
 
-	import generateBasicRecipes from '$faked/BasicRecipe';
 	import { BasicRecipe } from '$types/BasicRecipe';
 	import { page } from '$app/stores';
-	import type { APIErrorResponse } from '$utils/fetch';
+	import { post, type APIErrorResponse } from '$utils/fetch';
 	import { onMount } from 'svelte';
 	import { getBookmarks, setBookmarks } from '$store/bookmarks';
 	import { getRatings, setRatings } from '$store/ratings';
@@ -30,40 +29,69 @@
 
 	/** The recipes that match the query. */
 	let searchResults: BasicRecipe[] = [];
-	function onSearch(
+	/** Used for measuring whether this is the current reqeust.
+	 * Copy it into a variable before the request begins, and check after we
+	 * get a result and increment it. If they don't match, there has been
+	 * a request sent in the meantime which has had a result, meaning we
+	 * do not update again.
+	 *
+	 * https://cdn.discordapp.com/attachments/272233059527557131/998044508187009034/unknown.png
+	 */
+	let searchCount = 0;
+
+	async function onSearch(
 		e: CustomEvent<{
 			query: string;
 			selectedFilters: Record<string, Set<string>>;
 			resultsPerPage: number;
 		}>
 	) {
-		// const nutrientFilters = e.detail.selectedFilters['Nutrients'] ?? [];
-		// const lowercaseNutrients = new Set(
-		// 	[...nutrientFilters].map((nutrient) => nutrient.toLowerCase())
-		// );
+		console.debug('Searching for recipes...');
 
-		// const query = e.detail.query && new RegExp(e.detail.query.split('').join('.*'));
-		// const resultsPerPage = e.detail.resultsPerPage;
+		searchCount++;
+		let searchCountCheck = searchCount;
 
-		// searchResults = allRecipes
-		// 	.filter((recipe) => {
-		// 		if (lowercaseNutrients.size !== 0) {
-		// 			// Iterate over every nutrient in the recipe,
-		// 			// checking if *any* are in the nutrient filter.
-		// 			// If so, the recipe is valid. If not, return false as it isn't.
-		// 			if (!recipe.nutrients.some((nutrient) => lowercaseNutrients.has(nutrient.toLowerCase())))
-		// 				return false;
-		// 		}
+		// Generate the request body contents.
+		const reqBody = {} as Record<string, any>;
 
-		// 		if (query) {
-		// 			// Check if the recipe name contains the query
-		// 			if (!recipe.title.toLowerCase().match(query)) return false;
-		// 		}
+		const getFilter = (name: string) => e.detail.selectedFilters[name] ?? new Set();
+		const nutrients = [
+			...getFilter('Macronutrients'),
+			...getFilter('Minerals'),
+			...getFilter('Vitamins')
+		];
 
-		// 		return true;
-		// 	})
-		// 	.slice(0, resultsPerPage);
-		return [];
+		if (nutrients.length > 0) {
+			reqBody['nutrients'] = nutrients;
+		}
+		if (e.detail.query.length !== 0) {
+			reqBody['query'] = e.detail.query;
+		}
+		reqBody['resultsPerPage'] = e.detail.resultsPerPage;
+
+		// Send the request.
+		const localSearchResults = await post<BasicRecipe[]>('/search', JSON.stringify(reqBody)).then(
+			(res) => {
+				if (res.success) {
+					return res.data;
+				} else {
+					console.error(`API error fetching search: ${JSON.stringify(res.error)}`);
+					return [];
+				}
+			},
+			(e: APIErrorResponse) => {
+				console.error(`Unexpected error fetching search: ${JSON.stringify(e.error)}`);
+				return [];
+			}
+		);
+
+		// Check the request is still valid.
+		// Check `searchCount` docs for more on what this means.
+		if (searchCountCheck === searchCount) {
+			searchResults = localSearchResults;
+		} else {
+			console.debug('Search request was cancelled.');
+		}
 	}
 
 	onMount(() => {

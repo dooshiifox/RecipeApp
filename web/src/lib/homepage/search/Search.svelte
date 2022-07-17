@@ -28,8 +28,51 @@
 	/** A list of all available filters on the query. */
 	export let filters: Filter[] = [
 		{
-			title: 'Nutrients',
-			items: ['Protein', 'Carbohydrates', 'Iron', 'Fats', 'Vitamin A', 'Vitamin C']
+			title: 'Macronutrients',
+			items: [
+				'Protein',
+				'Carbohydrates',
+				'Fiber',
+				'Fat',
+				'Saturated Fat',
+				'Cholesterol',
+				'Calories',
+				'Sugar'
+			]
+		},
+		{
+			title: 'Minerals',
+			items: [
+				'Iron',
+				'Calcium',
+				'Magnesium',
+				'Zinc',
+				'Copper',
+				'Iodine',
+				'Manganese',
+				'Phosphorus',
+				'Potassium',
+				'Selenium',
+				'Sodium'
+			]
+		},
+		{
+			title: 'Vitamins',
+			items: [
+				'Vitamin A',
+				'Vitamin B1',
+				'Vitamin B2',
+				'Vitamin B3',
+				'Vitamin B5',
+				'Vitamin B6',
+				'Vitamin B9',
+				'Vitamin B12',
+				'Vitamin C',
+				'Vitamin D',
+				'Vitamin E',
+				'Vitamin K',
+				'Choline'
+			]
 		}
 	];
 

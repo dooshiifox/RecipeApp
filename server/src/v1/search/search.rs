@@ -40,7 +40,7 @@ pub struct SearchRequest {
     /// "a *and* b".
     ///
     /// If `None`, do not search for any nutrients.
-    pub nutrients: Option<Vec<Nutrient>>,
+    pub nutrients: Option<Vec<SerdeStringNutrient>>,
 }
 
 fn page_limit_default() -> u8 {
@@ -135,9 +135,9 @@ pub async fn search(
             "$or",
             nutrients
                 .iter()
-                .map(|nutrient| {
+                .map(|&nutrient| {
                     doc! {
-                        "nutrients": nutrient
+                        "nutrients": Nutrient::from(nutrient)
                     }
                 })
                 .collect::<Vec<mongodb::bson::Document>>(),
