@@ -7,6 +7,7 @@ use mongodb::bson::doc;
 use std::sync::{Arc, Mutex};
 
 mod envvar;
+mod macros;
 mod v1;
 
 /// Determines the current environment of the project.

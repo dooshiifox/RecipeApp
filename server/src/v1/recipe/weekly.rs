@@ -1,9 +1,9 @@
+use crate::id_error;
 use crate::v1::types::*;
 use crate::v1::utils::*;
 use actix_api_macros::*;
 use actix_web::{get, web, Responder};
 use std::sync::{Arc, Mutex};
-use tracing::error;
 
 #[derive(ActixApiEnum)]
 enum WeeklyRecipeResponse {
@@ -26,12 +26,10 @@ pub async fn uuid(
     let mut weekly_cacher_lock = match weekly_cacher.lock() {
         Ok(weekly_cacher_lock) => weekly_cacher_lock,
         Err(e) => {
-            let err_id = Uuid::random();
-            error!(
-                "Err ID: {}\nCould not lock weekly recipe cache: {}",
-                err_id, e
-            );
-            return WeeklyRecipeResponse::InternalError(err_id);
+            return WeeklyRecipeResponse::InternalError(id_error!(
+                "Could not lock weekly recipe cache: {}",
+                e
+            ));
         }
     };
 
@@ -43,5 +41,5 @@ pub async fn uuid(
     };
 
     // Convert from db::Recipe to BasicRecipe and return.
-    WeeklyRecipeResponse::WeeklyRecipe(BasicRecipe::from_recipe(recipe))
+    WeeklyRecipeResponse::WeeklyRecipe(BasicRecipe::from_recipe_with_weekly(recipe, true))
 }
