@@ -10,12 +10,12 @@
 	import Rated from '$lib/homepage/bottom_panels/Rated.svelte';
 	import FoundNothing from '$lib/homepage/FoundNothing.svelte';
 
-	import { BasicRecipe } from '$types/BasicRecipe';
+	import { BasicRecipe, type BasicRecipeConstructorUuid } from '$types/BasicRecipe';
 	import { page } from '$app/stores';
 	import { post, type APIErrorResponse } from '$utils/fetch';
 	import { onMount } from 'svelte';
-	import { getBookmarks, setBookmarks } from '$store/bookmarks';
-	import { getRatings, setRatings } from '$store/ratings';
+	import { getBookmarks } from '$store/bookmarks';
+	import { getRatings } from '$store/ratings';
 
 	let savedRecipes: BasicRecipe[] = [];
 	let ratedRecipes: BasicRecipe[] = [];
@@ -70,10 +70,13 @@
 		reqBody['resultsPerPage'] = e.detail.resultsPerPage;
 
 		// Send the request.
-		const localSearchResults = await post<BasicRecipe[]>('/search', JSON.stringify(reqBody)).then(
+		const localSearchResults = await post<BasicRecipeConstructorUuid[]>(
+			'/search',
+			JSON.stringify(reqBody)
+		).then(
 			(res) => {
 				if (res.success) {
-					return res.data;
+					return res.data.map((r) => new BasicRecipe(r));
 				} else {
 					console.error(`API error fetching search: ${JSON.stringify(res.error)}`);
 					return [];
@@ -97,8 +100,9 @@
 	onMount(() => {
 		let bookmarkSet = getBookmarks();
 		if (bookmarkSet) {
-			getAndAddRecipes(Array.from([...(bookmarkSet.values() || [])]), (recipe) => {
+			getAndAddRecipes([...(bookmarkSet.values() || [])], (recipe) => {
 				savedRecipes.push(recipe);
+				savedRecipes = savedRecipes; // Re-render components
 			});
 		}
 
@@ -112,7 +116,8 @@
 				});
 
 			getAndAddRecipes(sortedRatings || [], (recipe) => {
-				savedRecipes.push(recipe);
+				ratedRecipes.push(recipe);
+				ratedRecipes = ratedRecipes; // Re-render components
 			});
 		}
 	});
@@ -123,10 +128,16 @@
 		// ids will be fetched, until either we have 3 recipes or we run out of ids.
 		// The first 3 must be checked in parallel.
 		// The output should be in the order given.
+		let getterCount = 0;
 
 		const getSingle = () => {
 			const id = ids.shift();
 			if (id === undefined) return;
+			getterCount++;
+			if (getterCount > 10) {
+				console.error('Too many recipes attempted to be fetched.');
+				return;
+			}
 
 			BasicRecipe.getById(id).then(
 				(recipe) => {
@@ -164,10 +175,10 @@
 
 	<div class="flex flex-row justify-center gap-[120px]">
 		<div class="w-[480px]">
-			<Saved recipes={savedRecipes.slice(0, 3)} />
+			<Saved recipes={savedRecipes} />
 		</div>
 		<div class="w-[480px]">
-			<Rated recipes={ratedRecipes.slice(0, 3)} />
+			<Rated recipes={ratedRecipes} />
 		</div>
 	</div>
 

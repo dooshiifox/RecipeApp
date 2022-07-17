@@ -13,7 +13,6 @@ let weekly: BasicRecipe | null = null;
 const cachedRecipes: Map<Uuid, BasicRecipe> = new Map();
 
 export interface BasicRecipeConstructor {
-	id: Uuid;
 	dateAdded: DateMs;
 	short: string;
 	title: string;
@@ -25,7 +24,14 @@ export interface BasicRecipeConstructor {
 	gradient: Gradient;
 }
 
-export class BasicRecipe implements BasicRecipeConstructor {
+export interface BasicRecipeConstructorId extends BasicRecipeConstructor {
+	id: Uuid;
+}
+export interface BasicRecipeConstructorUuid extends BasicRecipeConstructor {
+	uuid: Uuid;
+}
+
+export class BasicRecipe implements BasicRecipeConstructorId {
 	id: Uuid;
 	dateAdded: DateMs;
 	short: string;
@@ -37,8 +43,12 @@ export class BasicRecipe implements BasicRecipeConstructor {
 	servings: number;
 	gradient: Gradient;
 
-	constructor(c: BasicRecipeConstructor) {
-		this.id = c.id;
+	constructor(c: BasicRecipeConstructorId | BasicRecipeConstructorUuid) {
+		if ('id' in c) {
+			this.id = c.id;
+		} else {
+			this.id = c.uuid;
+		}
 		this.dateAdded = c.dateAdded;
 		this.short = c.short;
 		this.title = c.title;
@@ -93,7 +103,7 @@ export class BasicRecipe implements BasicRecipeConstructor {
 	 * Rejects: `{ message: string, data?: { message?: string, data?: any } }`
 	 */
 	static getFromUrl(url: string): Promise<BasicRecipe> {
-		return get<BasicRecipeConstructor>(url)
+		return get<BasicRecipeConstructorUuid>(url)
 			.catch((e: APIErrorResponse) => {
 				return Promise.reject({
 					message: `Server returned an unexpected value when retrieving \`${url}\``,

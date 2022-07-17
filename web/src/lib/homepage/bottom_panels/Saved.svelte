@@ -7,6 +7,8 @@
 	import { toTimeString } from '$lib/recipe-view/utils';
 
 	export let recipes: BasicRecipe[] = [];
+
+	$: recipes && (() => console.log(recipes))();
 </script>
 
 <BottomPanel
