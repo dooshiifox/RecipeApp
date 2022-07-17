@@ -1,6 +1,8 @@
 use crate::v1::types::database::*;
 use crate::v1::types::*;
+use crate::WeeklyRecipeGetter;
 use heck::ToKebabCase;
+use mongodb::Client;
 
 /// The database Recipe type that is sent to/used by the database.
 ///
@@ -63,14 +65,14 @@ impl Recipe {
     /// weekly timestamp was not more than 7 days ago. In the future, this
     /// should change to check in the database if this is the newest
     /// valid weekly.
-    pub fn is_weekly(&self) -> bool {
-        if let Some(weekly) = &self.weekly_timestamp {
-            let now = Date::now();
-            // # of ms in 7 days.
-            let week_ms: u64 = 7 * 24 * 60 * 60 * 1000;
-            *weekly <= now && now <= *weekly + week_ms.into()
-        } else {
-            false
+    pub async fn is_weekly(
+        &self,
+        weekly_getter: &mut WeeklyRecipeGetter,
+        db_client: &Client,
+    ) -> bool {
+        match weekly_getter.get(db_client).await {
+            Ok(weekly) => weekly.uuid == self.uuid,
+            Err(_) => false,
         }
     }
 }

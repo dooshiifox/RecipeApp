@@ -54,6 +54,7 @@ fn page_number_default() -> u32 {
 #[post("/search")]
 pub async fn search(
     client: web::Data<mongodb::Client>,
+    weekly_cacher: web::Data<std::sync::Arc<std::sync::Mutex<WeeklyRecipeGetter>>>,
     body: web::Json<SearchRequest>,
 ) -> impl Responder {
     let search_request = body.into_inner();
@@ -156,11 +157,12 @@ pub async fn search(
         Ok(r) => r,
     };
 
+    // Get the recipes from the cursor.
     let mut recipes = vec![];
     loop {
         match cursor.advance().await {
             Ok(true) => match cursor.deserialize_current() {
-                Ok(recipe) => recipes.push(BasicRecipe::from_recipe(&recipe)),
+                Ok(recipe) => recipes.push(recipe),
                 Err(err) => {
                     return SearchResponse::InternalError(id_error!(
                         "Error deserializing recipe: {}",
@@ -178,7 +180,24 @@ pub async fn search(
         }
     }
 
-    SearchResponse::Recipes(recipes)
+    // Get the weekly cacher lock for the BasicRecipe::from_recipe fn.
+    let mut weekly_cacher_lock = match weekly_cacher.lock() {
+        Ok(weekly_cacher_lock) => weekly_cacher_lock,
+        Err(e) => {
+            return SearchResponse::InternalError(crate::id_error!(
+                "Could not lock weekly recipe cache: {}",
+                e
+            ));
+        }
+    };
+
+    let mut basic_recipes = vec![];
+    for recipe in recipes {
+        basic_recipes
+            .push(BasicRecipe::from_recipe(&recipe, &mut weekly_cacher_lock, &client).await);
+    }
+
+    SearchResponse::Recipes(basic_recipes)
 }
 
 /// Ensures the query is valid.

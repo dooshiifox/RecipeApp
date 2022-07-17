@@ -1,5 +1,7 @@
 use crate::v1::types::database::Recipe;
 use crate::v1::types::*;
+use crate::WeeklyRecipeGetter;
+use mongodb::Client;
 
 /// A recipe that contains less information than a standard `Recipe` or
 /// a database Recipe. This is used to reduce the amount of data that is
@@ -33,13 +35,38 @@ pub struct BasicRecipe {
 
 impl BasicRecipe {
     /// Creates a new `BasicRecipe` from a [`database::Recipe`].
-    pub fn from_recipe(recipe: &Recipe) -> Self {
+    pub async fn from_recipe(
+        recipe: &Recipe,
+        weekly_getter: &mut WeeklyRecipeGetter,
+        db_client: &Client,
+    ) -> Self {
         BasicRecipe {
             uuid: recipe.uuid,
             // Return the date it became public instead of the date it
             // was added to the database
             date_added: recipe.becomes_public,
-            is_weekly: recipe.is_weekly(),
+            is_weekly: recipe.is_weekly(weekly_getter, db_client).await,
+            short: recipe.short.clone(),
+            title: recipe.title.clone(),
+            // Convert Nutrient to SerdeStringNutrient so when sent to the
+            // client it will be serialized as a string.
+            nutrients: recipe.nutrients.iter().map(|&n| n.into()).collect(),
+            time_to_cook: recipe.time_to_cook,
+            servings: recipe.servings,
+            image: recipe.image.clone(),
+            gradient: recipe.gradient.clone(),
+        }
+    }
+
+    /// Creates a new `BasicRecipe` from a [`database::Recipe`], setting
+    /// the `is_weekly` field manually.
+    pub fn from_recipe_with_weekly(recipe: &Recipe, is_weekly: bool) -> Self {
+        BasicRecipe {
+            uuid: recipe.uuid,
+            // Return the date it became public instead of the date it
+            // was added to the database
+            date_added: recipe.becomes_public,
+            is_weekly,
             short: recipe.short.clone(),
             title: recipe.title.clone(),
             // Convert Nutrient to SerdeStringNutrient so when sent to the
