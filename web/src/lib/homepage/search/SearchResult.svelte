@@ -4,11 +4,10 @@
 	import GradientBackground from '$lib/GradientBackground.svelte';
 	import TimerIcon from '$icons/timer.svg?component';
 	import UtensilsIcon from '$icons/utensils.svg?component';
-	import BookmarkIcon from '$icons/bookmark.svg?component';
-	import EmptyBookmarkIcon from '$icons/bookmark-border.svg?component';
 	import Ratings from '$lib/recipe-view/Ratings.svelte';
 	import { toTimeString } from '$lib/recipe-view/utils';
 	import { browser } from '$app/env';
+	import Bookmark from '$src/lib/recipe-view/Bookmark.svelte';
 
 	export let recipe: BasicRecipe;
 
@@ -40,20 +39,12 @@
 					</p>
 				</div>
 
-				<div
-					class="w-12 h-12 grid place-items-center bookmark-wrapper"
-					on:click|stopPropagation|preventDefault={bookmark}
-				>
-					<div
-						class="p-1 rounded-lg bookmark-wrapper-hover:bg-white/30 fill-black/60 transition-all"
-					>
-						{#if browser && recipe.bookmarked}
-							<BookmarkIcon class="w-8 h-8" />
-						{:else}
-							<EmptyBookmarkIcon class="w-8 h-8" />
-						{/if}
-					</div>
-				</div>
+				<Bookmark
+					{recipe}
+					invisWrapperClass="w-12 h-12"
+					wrapperClass="p-1 rounded-lg"
+					class="w-8 h-8 fill-black/60"
+				/>
 			</div>
 			<!-- Fill any available vertical space so the info content
 			is at the bottom of the result. -->
@@ -83,9 +74,3 @@
 		</div>
 	</GradientBackground>
 </a>
-
-<style>
-	.bookmark-wrapper:hover .bookmark-wrapper-hover\:bg-white\/30 {
-		background-color: rgb(255 255 255 / 0.3);
-	}
-</style>
