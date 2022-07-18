@@ -9,38 +9,28 @@ use tracing::{error, trace};
 enum RecipeResponse {
     #[success(json)]
     Recipe(Recipe),
-    #[failure(
-        message = "The specified UUID was not valid. Expected UUIDv4 (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).",
-        json
-    )]
-    InvalidUuid(String),
-    #[failure(message = "The specified UUID was not found.", json)]
-    NotFound(Uuid),
+    #[failure(message = "The specified Short was not found.", json)]
+    NotFound(String),
     #[failure(message = "Internal server error.", json)]
     InternalError(Uuid),
 }
 
-#[get("/recipe/id/{uuid}")]
-pub async fn uuid(
+#[get("/recipe/short/{uuid}")]
+pub async fn short(
     client: web::Data<mongodb::Client>,
     weekly_cacher: web::Data<std::sync::Arc<std::sync::Mutex<WeeklyRecipeGetter>>>,
-    path_uuid: web::Path<String>,
+    path_short: web::Path<String>,
 ) -> impl Responder {
-    // Get the UUID
-    let path_uuid = path_uuid.into_inner();
-    let uuid: Result<Uuid, _> = path_uuid.clone().try_into();
-    trace!("Attempting to get Recipe from UUID: {}", path_uuid);
-    let uuid = match uuid {
-        Ok(uuid) => uuid,
-        Err(_) => return RecipeResponse::InvalidUuid(path_uuid),
-    };
+    // Get the short
+    let short = path_short.into_inner();
+    trace!("Attempting to get Recipe from Short: {}", &short);
 
     // Get the recipe from the database
     let db = client.get_collection::<database::Recipe>(Collections::Recipes);
-    let recipe = db.find_one(doc! {"_id": uuid}, None).await;
+    let recipe = db.find_one(doc! {"short": &short}, None).await;
     let recipe = match recipe {
         Ok(Some(recipe)) => recipe,
-        Ok(None) => return RecipeResponse::NotFound(uuid),
+        Ok(None) => return RecipeResponse::NotFound(short),
         Err(err) => {
             let err_id = Uuid::random();
             error!(

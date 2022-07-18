@@ -1,7 +1,8 @@
 import { dev } from '$app/env';
 
 /** A response from the server. */
-export type APIResponse<T> = APISuccessResponse<T> | APIErrorResponse;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type APIResponse<S, E = any> = APISuccessResponse<S> | APIErrorResponse<E>;
 
 /** A successful response from the server. */
 export interface APISuccessResponse<T> {
@@ -75,7 +76,11 @@ export enum ReqMethod {
  * Resolves: `APIResponse<T>`
  * Rejects: `APIErrorResponse`
  */
-export async function req<T>(endpoint: string, req?: RequestInit): Promise<APIResponse<T>> {
+export async function req<T>(
+	endpoint: string,
+	req?: RequestInit,
+	f: typeof fetch = fetch
+): Promise<APIResponse<T>> {
 	// Remove the leading slash from the endpoint
 	endpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
 	const url = new URL(endpoint, getServerAddress());
@@ -85,22 +90,24 @@ export async function req<T>(endpoint: string, req?: RequestInit): Promise<APIRe
 		throw new Error('GET and HEAD requests cannot have a body');
 	}
 
-	const response: Response | false = await fetch(
-		url,
+	const response: Response | APIErrorResponse = await f(
+		url.href,
 		req ?? {
 			headers: {
 				'Content-Type': 'application/json'
 			}
 		}
-	).catch(() => false);
-
-	if (!response) {
-		return Promise.reject({
+	).catch((e) => {
+		return {
 			success: false,
 			error: {
-				message: 'Failed to connect to the server'
+				message: e
 			}
-		});
+		};
+	});
+
+	if ('success' in response) {
+		return Promise.reject(response);
 	}
 
 	// Clone the response.
@@ -128,22 +135,34 @@ export async function req<T>(endpoint: string, req?: RequestInit): Promise<APIRe
 }
 
 /** Make a GET request to a specific API endpoint. */
-export async function get<T>(endpoint: string): Promise<APIResponse<T>> {
-	return req(endpoint, {
-		method: ReqMethod.GET,
-		headers: {
-			'Content-Type': 'application/json'
-		}
-	});
+export async function get<T>(endpoint: string, f: typeof fetch = fetch): Promise<APIResponse<T>> {
+	return req(
+		endpoint,
+		{
+			method: ReqMethod.GET,
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		},
+		f
+	);
 }
 
 /** Make a POST request to a specific API endpoint. */
-export async function post<T>(endpoint: string, body: BodyInit): Promise<APIResponse<T>> {
-	return req(endpoint, {
-		method: ReqMethod.POST,
-		headers: {
-			'Content-Type': 'application/json'
+export async function post<T>(
+	endpoint: string,
+	body: BodyInit,
+	f: typeof fetch = fetch
+): Promise<APIResponse<T>> {
+	return req(
+		endpoint,
+		{
+			method: ReqMethod.POST,
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body
 		},
-		body
-	});
+		f
+	);
 }

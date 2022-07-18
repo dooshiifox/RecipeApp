@@ -61,39 +61,25 @@ export class BasicRecipe implements BasicRecipeConstructorId {
 	}
 
 	/** Gets a BasicRecipe from the API by its UUID. */
-	static getById(id: string): Promise<BasicRecipe> {
+	static getById(id: Uuid, f: typeof fetch = fetch): Promise<BasicRecipe> {
 		const cached = cachedRecipes.get(id);
 		if (cached) {
 			return Promise.resolve(cached);
 		}
 
-		return BasicRecipe.getFromUrl(`/recipe-basic/${id}`).then(
-			(r) => {
-				// Cache the weekly recipe.
-				cachedRecipes.set(id, r);
-				return r;
-			},
-			(e) => {
-				return Promise.reject(e);
-			}
-		);
+		return BasicRecipe.getFromUrl(`/recipe-basic/id/${id}`, f);
 	}
 
 	/** Gets the current weekly recipe. */
-	static getWeekly(): Promise<BasicRecipe> {
+	static getWeekly(f: typeof fetch = fetch): Promise<BasicRecipe> {
 		// Check if weekly has already been retrieved.
 		if (weekly) return Promise.resolve(weekly);
 
-		return BasicRecipe.getFromUrl('/weekly').then(
-			(r) => {
-				// Cache the weekly recipe.
-				weekly = r;
-				return weekly;
-			},
-			(e) => {
-				return Promise.reject(e);
-			}
-		);
+		return BasicRecipe.getFromUrl('/weekly', f).then((r) => {
+			// Cache the weekly recipe.
+			weekly = r;
+			return weekly;
+		});
 	}
 
 	/** Returns a new BasicRecipe by retrieving its information from
@@ -102,8 +88,8 @@ export class BasicRecipe implements BasicRecipeConstructorId {
 	 * Resolves: `BasicRecipe`
 	 * Rejects: `{ message: string, data?: { message?: string, data?: any } }`
 	 */
-	static getFromUrl(url: string): Promise<BasicRecipe> {
-		return get<BasicRecipeConstructorUuid>(url)
+	static getFromUrl(url: string, f: typeof fetch = fetch): Promise<BasicRecipe> {
+		return get<BasicRecipeConstructorUuid>(url, f)
 			.catch((e: APIErrorResponse) => {
 				return Promise.reject({
 					message: `Server returned an unexpected value when retrieving \`${url}\``,
@@ -112,7 +98,9 @@ export class BasicRecipe implements BasicRecipeConstructorId {
 			})
 			.then((resp) => {
 				if (resp.success) {
-					return new BasicRecipe(resp.data);
+					const r = new BasicRecipe(resp.data);
+					cachedRecipes.set(r.id, r);
+					return r;
 				} else {
 					return Promise.reject({
 						message: `Server could not retrieve \`${url}\``,

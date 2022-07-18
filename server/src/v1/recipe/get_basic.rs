@@ -23,7 +23,7 @@ enum BasicRecipeResponse {
     InternalError(Uuid),
 }
 
-#[get("/recipe-basic/{uuid}")]
+#[get("/recipe-basic/id/{uuid}")]
 pub async fn uuid(
     client: web::Data<mongodb::Client>,
     weekly_cacher: web::Data<Arc<Mutex<WeeklyRecipeGetter>>>,

@@ -1,9 +1,20 @@
 use crate::v1::types::*;
+use actix_web::Scope;
 
 pub mod get;
 pub mod get_basic;
+pub mod get_short;
 pub mod post;
 pub mod weekly;
+
+pub fn init(scope: Scope) -> Scope {
+    scope
+        .service(post::insert)
+        .service(get_basic::uuid)
+        .service(get_short::short)
+        .service(get::uuid)
+        .service(weekly::uuid)
+}
 
 /// The type of recipe sent in the request body.
 #[derive(Debug, serde::Serialize, serde::Deserialize, Clone, PartialEq, Eq)]

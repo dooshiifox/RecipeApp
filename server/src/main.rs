@@ -44,17 +44,25 @@ async fn create_db_client(env_file: &str) -> Result<mongodb::Client, String> {
     let client = mongodb::Client::with_options(client_options);
     let client = client.map_err(|_| "Could not create MongoDB client".to_string())?;
 
+    let coll = client.get_collection::<crate::v1::types::database::Recipe>(Collections::Recipes);
     // Create a text index on the recipes collection for the title.
-    client
-        .get_collection::<crate::v1::types::database::Recipe>(Collections::Recipes)
-        .create_index(
-            mongodb::IndexModel::builder()
-                .keys(doc! { "title": "text" })
-                .build(),
-            None,
-        )
-        .await
-        .map_err(|_| "Could not create text index on recipes collection".to_string())?;
+    coll.create_index(
+        mongodb::IndexModel::builder()
+            .keys(doc! { "title": "text" })
+            .build(),
+        None,
+    )
+    .await
+    .map_err(|_| "Could not create text index on recipes collection".to_string())?;
+    // Create an index on the short field.
+    coll.create_index(
+        mongodb::IndexModel::builder()
+            .keys(doc! { "short": 1 })
+            .build(),
+        None,
+    )
+    .await
+    .map_err(|_| "Could not create index on recipe short field".to_string())?;
 
     Ok(client)
 }
