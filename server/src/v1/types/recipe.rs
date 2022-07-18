@@ -14,6 +14,10 @@ pub struct Recipe {
     pub date_added: Date,
     /// Whether the recipe is *currently* the weekly recipe.
     pub is_weekly: bool,
+    /// The short name of the recipe, used in the URL.
+    ///
+    /// e.g., `/recipe/chicken-tikka-masala`, `chicken-tikka-masala` is this string.
+    pub short: String,
     /// The title of the recipe.
     pub title: String,
     /// The nutrients found in the recipe.
@@ -45,6 +49,7 @@ impl Recipe {
             // was added to the database
             date_added: recipe.becomes_public,
             is_weekly: recipe.is_weekly(weekly_getter, db_client).await,
+            short: recipe.short.clone(),
             title: recipe.title.clone(),
             // Convert Nutrient to SerdeStringNutrient so when sent to the
             // client it will be serialized as a string.
