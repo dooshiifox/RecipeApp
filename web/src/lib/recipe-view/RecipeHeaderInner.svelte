@@ -58,8 +58,8 @@
 		</div>
 		<Bookmark
 			{recipe}
-			invisWrapperClass="w-16 h-16"
-			wrapperClass="p-1 rounded-lg"
+			invisWrapperClass="w-16 h-16 hover:cursor-pointer"
+			wrapperClass="p-0.5 rounded-lg"
 			class="w-10 h-10 fill-black/60"
 		/>
 	</div>

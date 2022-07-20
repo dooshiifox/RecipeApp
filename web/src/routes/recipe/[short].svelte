@@ -1,6 +1,7 @@
 <script context="module" lang="ts">
 	import PageError from '$lib/PageError.svelte';
 	import RecipeHeader from '$lib/recipe-view/RecipeHeader.svelte';
+	import Ingredients from '$src/lib/recipe-view/page/ingredients/Ingredients.svelte';
 
 	import { Recipe } from '$types/Recipe';
 	import type { APIErrorResponse, APIResponse } from '$utils/fetch';
@@ -79,5 +80,11 @@
 		</PageError>
 	{:else}
 		<RecipeHeader recipeFn={() => Promise.resolve(recipe)} />
+
+		<div class="w-full grid place-items-center my-12">
+			<div class="w-[480px]">
+				<Ingredients {recipe} />
+			</div>
+		</div>
 	{/if}
 </section>
