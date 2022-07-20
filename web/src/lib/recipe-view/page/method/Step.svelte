@@ -10,8 +10,11 @@
 	export let gradient: Gradient;
 </script>
 
-<div class="relative rounded-3xl overflow-clip">
-	<GradientBackground {gradient} class="absolute inset-0 saturate-[0.3] brightness-[1.15] -z-10" />
+<div class="relative rounded-3xl">
+	<GradientBackground
+		{gradient}
+		class="absolute inset-0 saturate-[0.3] brightness-[1.15] rounded-3xl -z-10"
+	/>
 	<div class="flex flex-col">
 		{#each Array(step.substeps.length) as _, i}
 			{#if i === 0}

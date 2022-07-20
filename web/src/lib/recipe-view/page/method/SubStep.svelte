@@ -1,6 +1,8 @@
 <script lang="ts">
 	import Formattable from '$src/lib/Formattable.svelte';
 	import type { Step, SubStep } from '$types/Recipe';
+	import Warning from './Warning.svelte';
+	import Info from './Info.svelte';
 
 	export let step: Step;
 	export let index: number;
@@ -75,26 +77,54 @@
 	})();
 </script>
 
-<div class="flex {imageOnLeft ? 'flex-row' : 'flex-row-reverse justify-end'} items-center">
-	{#if image}
-		<img
-			src={image}
-			class="w-[300px] aspect-[3/2] {roundedImage} {imgMarginClasses} bg-white/10 {onlySubstep
-				? ''
-				: firstSubstep
+<div class="flex flex-col w-full">
+	<div class="flex {imageOnLeft ? 'flex-row' : 'flex-row-reverse justify-end'} items-center">
+		{#if image}
+			<img
+				src={image}
+				class="w-[300px] aspect-[3/2] {roundedImage} {imgMarginClasses} bg-white/10 {onlySubstep
+					? ''
+					: firstSubstep
+					? 'self-start'
+					: finalSubstep
+					? 'self-end'
+					: ''}"
+				alt="Image of substep {index}"
+			/>
+		{/if}
+		<div
+			class="grow text-2xl text-black/80 mx-8 {textMarginClasses} {firstSubstep && image
 				? 'self-start'
-				: finalSubstep
-				? 'self-end'
 				: ''}"
-			alt="Image of substep {index}"
-		/>
-	{/if}
+		>
+			<slot name="title" />
+			<Formattable content={substep?.content ?? ''} />
+		</div>
+	</div>
 	<div
-		class="grow text-2xl text-black/80 mx-8 {textMarginClasses} {firstSubstep && image
-			? 'self-start'
-			: ''}"
+		class="flex flex-col gap-4 w-2/3 relative {!image
+			? index % 2
+				? '-left-40'
+				: '-right-40'
+			: imageOnLeft
+			? '-right-40'
+			: '-left-40'}"
 	>
-		<slot name="title" />
-		<Formattable content={substep?.content ?? ''} />
+		{#each substep?.warnings ?? [] as warning}
+			<Warning {warning} />
+		{/each}
+	</div>
+	<div
+		class="flex flex-col gap-4 w-2/3 relative {!image
+			? index % 2
+				? '-left-40'
+				: '-right-40'
+			: imageOnLeft
+			? '-right-40'
+			: '-left-40'}"
+	>
+		{#each substep?.infos ?? [] as info}
+			<Info {info} />
+		{/each}
 	</div>
 </div>
