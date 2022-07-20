@@ -2,6 +2,7 @@
 	import PageError from '$lib/PageError.svelte';
 	import RecipeHeader from '$lib/recipe-view/RecipeHeader.svelte';
 	import Ingredients from '$src/lib/recipe-view/page/ingredients/Ingredients.svelte';
+	import Method from '$src/lib/recipe-view/page/method/Method.svelte';
 
 	import { Recipe } from '$types/Recipe';
 	import type { APIErrorResponse, APIResponse } from '$utils/fetch';
@@ -85,6 +86,10 @@
 			<div class="w-[480px]">
 				<Ingredients {recipe} />
 			</div>
+		</div>
+
+		<div class="w-[1000px] mx-auto my-12">
+			<Method {recipe} />
 		</div>
 	{/if}
 </section>
