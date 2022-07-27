@@ -1,5 +1,4 @@
-use crate::v1::types::database::Method;
-use crate::v1::types::database::Recipe as DatabaseRecipe;
+use crate::v1::types::database::{Method, Quiz, Recipe as DatabaseRecipe};
 use crate::v1::types::*;
 
 /// A recipe that contains less information than a standard `Recipe` or
@@ -34,6 +33,8 @@ pub struct Recipe {
     pub ingredients: Vec<String>,
     /// The recipe's method
     pub method: Method,
+    /// The recipe's quiz.
+    pub quiz: Quiz,
 }
 
 impl Recipe {
@@ -60,6 +61,7 @@ impl Recipe {
             gradient: recipe.gradient.clone(),
             ingredients: recipe.ingredients.clone(),
             method: recipe.method.clone(),
+            quiz: recipe.quiz.clone(),
         }
     }
 }
