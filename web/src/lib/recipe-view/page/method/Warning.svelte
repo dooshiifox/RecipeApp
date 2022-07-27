@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Formattable from '$src/lib/Formattable.svelte';
-	import type { Warning } from '$types/Recipe';
+	import Formattable from '$src/lib/utils/Formattable.svelte';
+	import type { Warning } from '$types/index';
 	import WarningIcon from '$icons/warning.svg?component';
 
 	export let warning: Warning;

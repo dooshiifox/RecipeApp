@@ -1,5 +1,5 @@
 <script lang="ts">
-	import GradientBackground from '$lib/GradientBackground.svelte';
+	import GradientBackground from '$lib/utils/GradientBackground.svelte';
 	import type { Gradient } from '$types/gradient';
 
 	export let foregroundGradient: Gradient;

@@ -1,7 +1,7 @@
 <script lang="ts">
-	import GradientBackground from '$src/lib/GradientBackground.svelte';
+	import GradientBackground from '$lib/utils/GradientBackground.svelte';
 	import type { Gradient } from '$types/gradient';
-	import type { Step } from '$types/Recipe';
+	import type { Step } from '$types/index';
 	import StepTitle from './StepTitle.svelte';
 	import SubStep from './SubStep.svelte';
 

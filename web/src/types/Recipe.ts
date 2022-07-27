@@ -1,34 +1,5 @@
 import { get, type APIErrorResponse } from '$utils/fetch';
-import { BasicRecipe, type BasicRecipeConstructor } from './BasicRecipe';
-import type { Uuid } from './uuid';
-
-export type Formattable = string;
-
-export interface Warning {
-	title: string;
-	content: Formattable;
-}
-
-export interface Info {
-	title: string;
-	content: Formattable;
-}
-
-export interface SubStep {
-	content: Formattable;
-	image?: string;
-	warnings?: Warning[];
-	infos?: Info[];
-}
-
-export interface Step {
-	title: string;
-	substeps: SubStep[];
-}
-
-export interface Method {
-	steps: Step[];
-}
+import { BasicRecipe, type BasicRecipeConstructor, type Uuid, type Method, type Quiz } from '.';
 
 /** The Recipe cacher. */
 const cachedRecipesByUuid: Map<Uuid, Recipe> = new Map();
@@ -37,6 +8,7 @@ const cachedRecipesByShort: Map<Uuid, Recipe> = new Map();
 export interface RecipeConstructor extends BasicRecipeConstructor {
 	ingredients: string[];
 	method: Method;
+	quiz: Quiz;
 }
 
 export interface RecipeConstructorId extends RecipeConstructor {
@@ -50,12 +22,14 @@ export interface RecipeConstructorUuid extends RecipeConstructor {
 export class Recipe extends BasicRecipe implements RecipeConstructorId {
 	ingredients: string[];
 	method: Method;
+	quiz: Quiz;
 
 	constructor(c: RecipeConstructorId | RecipeConstructorUuid) {
 		super(c);
 
 		this.ingredients = c.ingredients;
 		this.method = c.method;
+		this.quiz = c.quiz;
 	}
 
 	/** Gets a Recipe from the API by its UUID. */

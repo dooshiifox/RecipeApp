@@ -1,8 +1,8 @@
 <script context="module" lang="ts">
 	import PageError from '$lib/PageError.svelte';
 	import RecipeHeader from '$lib/recipe-view/RecipeHeader.svelte';
-	import Ingredients from '$src/lib/recipe-view/page/ingredients/Ingredients.svelte';
-	import Method from '$src/lib/recipe-view/page/method/Method.svelte';
+	import Ingredients from '$lib/recipe-view/page/ingredients/Ingredients.svelte';
+	import Method from '$lib/recipe-view/page/method/Method.svelte';
 
 	import { Recipe } from '$types/Recipe';
 	import type { APIErrorResponse, APIResponse } from '$utils/fetch';
@@ -76,6 +76,7 @@
 
 <section>
 	{#if !response.success}
+		<!-- Could not get the recipe for whatever reason. -->
 		<PageError>
 			{error.join(': ') ?? "... and we don't know what it was 😱"}
 		</PageError>

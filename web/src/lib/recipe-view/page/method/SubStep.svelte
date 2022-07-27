@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Formattable from '$src/lib/Formattable.svelte';
-	import type { Step, SubStep } from '$types/Recipe';
+	import Formattable from '$src/lib/utils/Formattable.svelte';
+	import type { Step, SubStep } from '$types/index';
 	import Warning from './Warning.svelte';
 	import Info from './Info.svelte';
 

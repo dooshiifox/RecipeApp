@@ -6,7 +6,7 @@
 	import TimerIcon from '$icons/timer.svg?component';
 	import UtensilsIcon from '$icons/utensils.svg?component';
 	import Ratings from './Ratings.svelte';
-	import GradientBackground from '../GradientBackground.svelte';
+	import GradientBackground from '$lib/utils/GradientBackground.svelte';
 	import Bookmark from './Bookmark.svelte';
 
 	export let recipe: BasicRecipe;

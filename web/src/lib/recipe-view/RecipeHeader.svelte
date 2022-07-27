@@ -2,7 +2,7 @@
 	import { fade } from 'svelte/transition';
 
 	import type { BasicRecipe } from '$types/BasicRecipe';
-	import GradientBackground from '../GradientBackground.svelte';
+	import GradientBackground from '$lib/utils/GradientBackground.svelte';
 	import { onMount } from 'svelte';
 	import RecipeHeaderInner from './RecipeHeaderInner.svelte';
 

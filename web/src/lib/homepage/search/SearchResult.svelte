@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { BasicRecipe } from '$types/BasicRecipe';
 	import { toRecipeString } from '$types/nutrient';
-	import GradientBackground from '$lib/GradientBackground.svelte';
+	import GradientBackground from '$lib/utils/GradientBackground.svelte';
 	import TimerIcon from '$icons/timer.svg?component';
 	import UtensilsIcon from '$icons/utensils.svg?component';
 	import Ratings from '$lib/recipe-view/Ratings.svelte';

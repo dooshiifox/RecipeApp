@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Formattable from '$src/lib/Formattable.svelte';
-	import type { Info } from '$types/Recipe';
+	import Formattable from '$src/lib/utils/Formattable.svelte';
+	import type { Info } from '$types/index';
 	import InfoIcon from '$icons/menu-book.svg?component';
 
 	export let info: Info;

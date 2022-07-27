@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import GradientBackground from './GradientBackground.svelte';
+	import GradientBackground from './utils/GradientBackground.svelte';
 
 	let path = $page.url;
 </script>
