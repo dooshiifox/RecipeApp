@@ -3,6 +3,8 @@
 	import RecipeHeader from '$lib/recipe-view/RecipeHeader.svelte';
 	import Ingredients from '$lib/recipe-view/page/ingredients/Ingredients.svelte';
 	import Method from '$lib/recipe-view/page/method/Method.svelte';
+	import QuizButton from '$lib/recipe-view/page/quiz/QuizButton.svelte';
+	import Quiz from '$lib/recipe-view/page/quiz/Quiz.svelte';
 
 	import { Recipe } from '$types/Recipe';
 	import type { APIErrorResponse, APIResponse } from '$utils/fetch';
@@ -67,6 +69,8 @@
 		if (response.error?.data?.message) error.push(response.error.data.message);
 		if (response.error?.data?.data) error.push(JSON.stringify(response.error.data.data));
 	}
+
+	let quizOpen = false;
 </script>
 
 <svelte:head>
@@ -92,5 +96,11 @@
 		<div class="w-[1000px] mx-auto my-12">
 			<Method {recipe} />
 		</div>
+
+		<div class="mx-auto my-12">
+			<QuizButton on:click={() => (quizOpen = true)} />
+		</div>
+
+		<Quiz {recipe} open={quizOpen} on:close={() => (quizOpen = false)} />
 	{/if}
 </section>
