@@ -35,12 +35,12 @@
 					<!-- This element is to trick the browser into centering the modal contents. -->
 					<span class="inline-block align-middle h-screen" aria-hidden="true"> &#8203; </span>
 					<div
-						class="inline-block content-center bg-white rounded-3xl text-left shadow-xl transform transition-all my-8 align-middle max-w-[800px] w-full"
+						class="inline-block content-center bg-white rounded-3xl text-left shadow-xl transform transition-all my-8 align-middle max-w-[800px] max-h-[600px] w-full"
 					>
 						<div class="flex flex-col items-center relative">
 							<!-- mb-8 determined by half of height of child (h-16)
                                 due to moving up by half. -->
-							<div class="relative mb-8 w-full max-w-[480px] max-h-[600px]">
+							<div class="relative mb-8 w-full max-w-[480px]">
 								<GradientBackground
 									gradient={titleGradient}
 									class="absolute inset-0 -translate-y-1/2 rounded-full flex flex-row items-center justify-center gap-8 h-16 px-8 py-2"

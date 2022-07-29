@@ -16,9 +16,12 @@
 	let correctCount = 0;
 	let totalReward = 0;
 
-	let qIndex = 0;
+	let qIndex = 3;
 	let questions = _.shuffle(recipe.quiz.questions);
 	let question = questions[qIndex];
+
+	let showEnd = false;
+	let showClose = false;
 
 	function answered(e: CustomEvent<boolean>) {
 		const correct = e.detail;
@@ -35,10 +38,23 @@
 		nextQuestionButton = false;
 		if (qIndex + 1 >= questions.length) {
 			console.log('quiz done');
-			open = false;
+			showEnd = true;
+			// Wait 0.5 seconds before showing the close button.
+			setTimeout(() => {
+				showClose = true;
+			}, 500);
 		} else {
 			qIndex++;
 			question = questions[qIndex];
+		}
+	}
+
+	function keyPress(e: KeyboardEvent) {
+		if (!nextQuestionButton) return;
+		if (e.key === 'Enter') {
+			e.stopPropagation();
+			e.preventDefault();
+			nextQuestion();
 		}
 	}
 </script>
@@ -70,8 +86,32 @@
 			<!-- Higher Z than content but lower Z than button so its still clickable. -->
 			<div class="absolute z-10 inset-0" on:click={nextQuestion} />
 		{/if}
-		<div class="px-12">
-			<QuizQuestion {question} on:click={answered} />
+		<div class="px-12" on:keypress={keyPress}>
+			{#if showEnd}
+				<div class="text-center my-8">
+					<h4 class="text-black/90 text-4xl font-bold">Quiz Complete!</h4>
+					<div class="text-black/70 text-2xl my-6">
+						<p>You got</p>
+						<p class="mt-2">
+							<span class="text-[#efd867] text-8xl font-bold">{correctCount}&nbsp;</span>
+							<span class="text-[#efd867] text-7xl font-bold">/ {questions.length}</span>
+						</p>
+					</div>
+				</div>
+			{:else}
+				<QuizQuestion {question} on:click={answered} />
+			{/if}
 		</div>
+	</div>
+	<div slot="close">
+		{#if showEnd}
+			<button
+				class="rounded-full w-[480px] bg-[#f7f484] hover:bg-[#efd867] shadow-lg p-3 transition-all"
+				class:opacity-0={!showClose}
+				on:click={() => (open = false)}
+			>
+				<span class="text-3xl font-bold text-black/90">Close</span>
+			</button>
+		{/if}
 	</div>
 </Dialog>

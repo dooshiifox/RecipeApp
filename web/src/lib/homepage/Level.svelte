@@ -3,6 +3,8 @@
 	import TrophyIcon from '$icons/trophy.svg?component';
 	import getLevelingInfo from '$store/level';
 
+	export let showQuote = true;
+
 	/** A collection of quotes that can be displayed below the
 	 * progress bar.
 	 */
@@ -65,6 +67,8 @@
 				style="width: {percent * 100}%;"
 			/>
 		</div>
-		<span class="text-[#54451f]/60 text-xl italic ml-4 leading-4">{motivationalQuote}</span>
+		{#if showQuote}
+			<span class="text-[#54451f]/60 text-xl italic ml-4 leading-4">{motivationalQuote}</span>
+		{/if}
 	</div>
 </div>
