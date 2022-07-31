@@ -9,6 +9,7 @@
 	import { fade } from 'svelte/transition';
 	import Level from '$src/lib/homepage/Level.svelte';
 	import { getTotalXp, setTotalXp } from '$src/store/level';
+	import type { Question } from '$src/types';
 
 	export let recipe: Recipe;
 	export let open: boolean;
@@ -17,23 +18,43 @@
 
 	let nextQuestionButton = false;
 
-	let correctCount = 0;
-	let totalReward = 0;
+	enum AnswerState {
+		Correct,
+		Incorrect,
+		Unanswered,
+		Current
+	}
+
+	// An array of questions in order.
+	// Shuffles the given questions so theyre not in order and it feels
+	// more random.
+	let questions: { question: Question; state: AnswerState }[] = _.shuffle(
+		recipe.quiz.questions
+	).map((question) => {
+		return { question, state: AnswerState.Unanswered };
+	});
 
 	let qIndex = 0;
-	let questions = _.shuffle(recipe.quiz.questions);
-	let question = questions[qIndex];
+	let question = questions[qIndex].question;
+	questions[qIndex].state = AnswerState.Current;
 
+	let totalReward = 0;
+	/** The number of questions answered correctly. */
+	$: correctCount = questions.filter((q) => q.state === AnswerState.Correct).length;
+
+	// Whether to show the end page or the close button.
 	let showEnd = false;
 	let showClose = false;
 
 	function answered(e: CustomEvent<boolean>) {
 		const correct = e.detail;
 		if (correct) {
-			correctCount++;
 			totalReward += question.reward;
 			setTotalXp(getTotalXp() + question.reward);
 		}
+
+		// Update state of the question to reflect the answer.
+		questions[qIndex].state = correct ? AnswerState.Correct : AnswerState.Incorrect;
 
 		// Wait 0.5 second before showing the next question button.
 		setTimeout(() => {
@@ -47,7 +68,8 @@
 			onFinish();
 		} else {
 			qIndex++;
-			question = questions[qIndex];
+			question = questions[qIndex].question;
+			questions[qIndex].state = AnswerState.Current;
 		}
 	}
 
@@ -63,6 +85,7 @@
 	function onFinish() {
 		showEnd = true;
 
+		// Check if the user got all of them correct.
 		if (correctCount === questions.length) {
 			totalReward += recipe.quiz.allCorrectReward;
 			setTotalXp(getTotalXp() + recipe.quiz.allCorrectReward);
@@ -79,6 +102,19 @@
 	<QuizIcon slot="icon" class="w-full h-full fill-black/80" />
 	<span slot="title" class="text-black/90">Quiz</span>
 	<div slot="content" class="w-full relative">
+		<!-- Question counter. -->
+		<div class="absolute -top-8 right-0 flex gap-2 p-4">
+			{#each questions as q}
+				<div
+					class="w-4 h-4 rounded"
+					class:bg-lime-300={q.state === AnswerState.Correct}
+					class:bg-red-300={q.state === AnswerState.Incorrect}
+					class:bg-blue-300={q.state === AnswerState.Current}
+					class:bg-gray-400={q.state === AnswerState.Unanswered}
+				/>
+			{/each}
+		</div>
+
 		{#if nextQuestionButton}
 			<!--
 				Very messy here.
