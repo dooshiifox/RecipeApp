@@ -7,16 +7,20 @@
 
 	import type { Recipe } from '$types/Recipe';
 	import { fade } from 'svelte/transition';
+	import Level from '$src/lib/homepage/Level.svelte';
+	import { getTotalXp, setTotalXp } from '$src/store/level';
 
 	export let recipe: Recipe;
 	export let open: boolean;
+
+	const xpStartingQuiz = getTotalXp();
 
 	let nextQuestionButton = false;
 
 	let correctCount = 0;
 	let totalReward = 0;
 
-	let qIndex = 3;
+	let qIndex = 0;
 	let questions = _.shuffle(recipe.quiz.questions);
 	let question = questions[qIndex];
 
@@ -25,8 +29,11 @@
 
 	function answered(e: CustomEvent<boolean>) {
 		const correct = e.detail;
-		correctCount += correct ? 1 : 0;
-		totalReward += correct ? question.reward : 0;
+		if (correct) {
+			correctCount++;
+			totalReward += question.reward;
+			setTotalXp(getTotalXp() + question.reward);
+		}
 
 		// Wait 0.5 second before showing the next question button.
 		setTimeout(() => {
@@ -37,12 +44,7 @@
 	function nextQuestion() {
 		nextQuestionButton = false;
 		if (qIndex + 1 >= questions.length) {
-			console.log('quiz done');
-			showEnd = true;
-			// Wait 0.5 seconds before showing the close button.
-			setTimeout(() => {
-				showClose = true;
-			}, 500);
+			onFinish();
 		} else {
 			qIndex++;
 			question = questions[qIndex];
@@ -56,6 +58,20 @@
 			e.preventDefault();
 			nextQuestion();
 		}
+	}
+
+	function onFinish() {
+		showEnd = true;
+
+		if (correctCount === questions.length) {
+			totalReward += recipe.quiz.allCorrectReward;
+			setTotalXp(getTotalXp() + recipe.quiz.allCorrectReward);
+		}
+
+		// Wait 0.5 seconds before showing the close button
+		setTimeout(() => {
+			showClose = true;
+		}, 500);
 	}
 </script>
 
@@ -88,7 +104,7 @@
 		{/if}
 		<div class="px-12" on:keypress={keyPress}>
 			{#if showEnd}
-				<div class="text-center my-8">
+				<div class="text-center mt-8">
 					<h4 class="text-black/90 text-4xl font-bold">Quiz Complete!</h4>
 					<div class="text-black/70 text-2xl my-6">
 						<p>You got</p>
@@ -97,6 +113,10 @@
 							<span class="text-[#efd867] text-7xl font-bold">/ {questions.length}</span>
 						</p>
 					</div>
+					<Level
+						showQuote={false}
+						animate={{ fromXp: xpStartingQuiz, toXp: xpStartingQuiz + totalReward }}
+					/>
 				</div>
 			{:else}
 				<QuizQuestion {question} on:click={answered} />

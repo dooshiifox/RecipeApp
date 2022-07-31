@@ -10,10 +10,6 @@
 	import Bookmark from '$src/lib/recipe-view/Bookmark.svelte';
 
 	export let recipe: BasicRecipe;
-
-	function bookmark() {
-		recipe.bookmarked = !recipe.bookmarked;
-	}
 </script>
 
 <a

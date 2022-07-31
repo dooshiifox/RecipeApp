@@ -5,7 +5,7 @@ import storage from './localStorage';
 export function getBookmarks(): Set<Uuid> | undefined {
 	if (storage === undefined) return;
 
-	const bookmarks = JSON.parse(storage.bookmarks || '[]');
+	const bookmarks = storage.bookmarks.get() || [];
 	if (!Array.isArray(bookmarks)) {
 		throw new Error('Could not parse LocalStorage `bookmarks` as array');
 	}
@@ -17,5 +17,5 @@ export function getBookmarks(): Set<Uuid> | undefined {
 export function setBookmarks(bookmarks: Set<Uuid>): void {
 	if (storage === undefined) return;
 
-	storage.bookmarks = JSON.stringify([...bookmarks]);
+	storage.bookmarks.set([...bookmarks]);
 }

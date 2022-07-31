@@ -5,7 +5,7 @@ import storage from './localStorage';
 export function getRatings(): Record<Uuid, number> | undefined {
 	if (storage === undefined) return;
 
-	const ratings = JSON.parse(storage.ratings || '{}');
+	const ratings = storage.ratings.get() ?? {};
 	if (!(ratings instanceof Object)) {
 		throw new Error('Could not parse LocalStorage `ratings` as object');
 	}
@@ -17,5 +17,5 @@ export function getRatings(): Record<Uuid, number> | undefined {
 export function setRatings(ratings: Record<Uuid, number>): void {
 	if (storage === undefined) return;
 
-	storage.ratings = JSON.stringify(ratings);
+	storage.ratings.set(ratings);
 }
