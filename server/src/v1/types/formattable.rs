@@ -1,3 +1,9 @@
+/// A formattable is a markdown-like string that can be formatted by the client.
+/// Its markdown implementation has not yet been added to the front-end
+/// and its definition still not in place.
+///
+/// Its purpose as a seperate type in the backend is purely to make it obvious
+/// that some fields are formattable and some are simply strings.
 #[derive(Debug, serde::Serialize, serde::Deserialize, Clone, PartialEq, Eq, Default)]
 pub struct Formattable(String);
 

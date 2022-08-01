@@ -91,6 +91,9 @@ lazy_static::lazy_static! {
 ///
 /// Internally is a `u16` as this allows for more efficient storage,
 /// however has several functions that make it easier to use as a `String`.
+///
+/// If serializing and deserializing from/to a string, use
+/// [`SerdeStringNutrient`] which wraps this type.
 #[derive(serde::Serialize, serde::Deserialize, Copy, Clone, Debug, PartialEq, Eq)]
 pub struct Nutrient(u16);
 

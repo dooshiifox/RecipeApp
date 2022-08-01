@@ -15,6 +15,7 @@ pub enum AuthError {
     InvalidKey,
 }
 
+/// Checks if a user is authenticated to perform an action.
 pub fn check_user_auth(req: HttpRequest) -> Result<(), AuthError> {
     // Get the auth header from the request. Return a 401 if not present.
     let auth_header = match req.headers().get("Authorization") {

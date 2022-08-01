@@ -6,7 +6,6 @@ use clap::{App as ClapApp, Arg};
 use mongodb::bson::doc;
 use std::sync::{Arc, Mutex};
 
-mod envvar;
 mod macros;
 mod v1;
 

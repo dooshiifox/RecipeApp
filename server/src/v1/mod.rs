@@ -6,6 +6,9 @@ mod search;
 pub mod types;
 pub mod utils;
 
+/// This trait allows for simpler creation of service generators.
+///
+/// See [`Router::service_generator`] for more info on it.
 pub trait Router
 where
     Self: std::marker::Sized,
@@ -20,6 +23,7 @@ where
     fn service_generator(self, f: fn(Self) -> Self) -> Self;
 }
 
+// Implement onto scope so we can use and chain `scope.service_generator` calls.
 impl Router for Scope {
     fn service_generator(self, f: fn(Self) -> Self) -> Self {
         f(self)

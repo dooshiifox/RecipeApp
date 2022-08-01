@@ -1,5 +1,6 @@
 use mongodb::Collection;
 
+/// The name of the database to connect to.
 const DATABASE_NAME: &str = "recipe_db";
 
 /// An enum of all collections present in the database.
