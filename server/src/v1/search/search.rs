@@ -54,7 +54,7 @@ fn page_number_default() -> u32 {
 #[post("/search")]
 pub async fn search(
     client: web::Data<mongodb::Client>,
-    weekly_cacher: web::Data<std::sync::Arc<std::sync::Mutex<WeeklyRecipeGetter>>>,
+    weekly_cacher: web::Data<std::sync::Arc<WeeklyRecipeGetter>>,
     body: web::Json<SearchRequest>,
 ) -> impl Responder {
     let search_request = body.into_inner();
@@ -180,21 +180,9 @@ pub async fn search(
         }
     }
 
-    // Get the weekly cacher lock for the BasicRecipe::from_recipe fn.
-    let mut weekly_cacher_lock = match weekly_cacher.lock() {
-        Ok(weekly_cacher_lock) => weekly_cacher_lock,
-        Err(e) => {
-            return SearchResponse::InternalError(crate::id_error!(
-                "Could not lock weekly recipe cache: {}",
-                e
-            ));
-        }
-    };
-
     let mut basic_recipes = vec![];
     for recipe in recipes {
-        basic_recipes
-            .push(BasicRecipe::from_recipe(&recipe, &mut weekly_cacher_lock, &client).await);
+        basic_recipes.push(BasicRecipe::from_recipe(&recipe, &weekly_cacher).await);
     }
 
     SearchResponse::Recipes(basic_recipes)

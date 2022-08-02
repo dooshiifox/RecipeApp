@@ -4,7 +4,8 @@ use actix_cors::Cors;
 use actix_web::{web, App as ActixApp, HttpServer};
 use clap::{App as ClapApp, Arg};
 use mongodb::bson::doc;
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
+use std::sync::RwLock;
 
 mod macros;
 mod v1;
@@ -165,8 +166,7 @@ async fn main() -> std::io::Result<()> {
         .expect("Could not ping MongoDB");
     println!("Connected to the database successfully.");
 
-    let weekly_recipe_getter = WeeklyRecipeGetter::default();
-    let weekly_recipe_getter = Arc::new(Mutex::new(weekly_recipe_getter));
+    let weekly_recipe_getter = Arc::new(WeeklyRecipeGetter::new(client.clone()));
 
     // Start the web server
     println!("Starting Actix-web server on http://0.0.0.0:{}", port);

@@ -5,7 +5,6 @@ use actix_api_macros::*;
 use actix_web::{get, web, Responder};
 use mongodb::bson::doc;
 use std::sync::Arc;
-use std::sync::Mutex;
 use tracing::{error, trace};
 
 #[derive(ActixApiEnum)]
@@ -26,7 +25,7 @@ enum BasicRecipeResponse {
 #[get("/recipe-basic/id/{uuid}")]
 pub async fn uuid(
     client: web::Data<mongodb::Client>,
-    weekly_cacher: web::Data<Arc<Mutex<WeeklyRecipeGetter>>>,
+    weekly_cacher: web::Data<Arc<WeeklyRecipeGetter>>,
     path_uuid: web::Path<String>,
 ) -> impl Responder {
     // Get the UUID
@@ -52,18 +51,6 @@ pub async fn uuid(
         }
     };
 
-    let mut weekly_cacher_lock = match weekly_cacher.lock() {
-        Ok(weekly_cacher_lock) => weekly_cacher_lock,
-        Err(e) => {
-            return BasicRecipeResponse::InternalError(id_error!(
-                "Could not lock weekly recipe cache: {}",
-                e
-            ));
-        }
-    };
-
     // Convert from db::Recipe to BasicRecipe and return.
-    BasicRecipeResponse::BasicRecipe(
-        BasicRecipe::from_recipe(&recipe, &mut weekly_cacher_lock, &client).await,
-    )
+    BasicRecipeResponse::BasicRecipe(BasicRecipe::from_recipe(&recipe, &weekly_cacher).await)
 }

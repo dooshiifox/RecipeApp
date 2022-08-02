@@ -41,15 +41,14 @@ impl Recipe {
     /// Creates a new `Recipe` from a [`database::Recipe`].
     pub async fn from_recipe(
         recipe: &DatabaseRecipe,
-        weekly_getter: &mut crate::WeeklyRecipeGetter,
-        db_client: &mongodb::Client,
+        weekly_getter: &crate::WeeklyRecipeGetter,
     ) -> Self {
         Recipe {
             uuid: recipe.uuid,
             // Return the date it became public instead of the date it
             // was added to the database
             date_added: recipe.becomes_public,
-            is_weekly: recipe.is_weekly(weekly_getter, db_client).await,
+            is_weekly: recipe.is_weekly(weekly_getter).await,
             short: recipe.short.clone(),
             title: recipe.title.clone(),
             // Convert Nutrient to SerdeStringNutrient so when sent to the

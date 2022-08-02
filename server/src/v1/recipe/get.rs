@@ -23,7 +23,7 @@ enum RecipeResponse {
 #[get("/recipe/id/{uuid}")]
 pub async fn uuid(
     client: web::Data<mongodb::Client>,
-    weekly_cacher: web::Data<std::sync::Arc<std::sync::Mutex<WeeklyRecipeGetter>>>,
+    weekly_cacher: web::Data<std::sync::Arc<WeeklyRecipeGetter>>,
     path_uuid: web::Path<String>,
 ) -> impl Responder {
     // Get the UUID
@@ -51,16 +51,6 @@ pub async fn uuid(
         }
     };
 
-    let mut weekly_cacher_lock = match weekly_cacher.lock() {
-        Ok(weekly_cacher_lock) => weekly_cacher_lock,
-        Err(e) => {
-            return RecipeResponse::InternalError(crate::id_error!(
-                "Could not lock weekly recipe cache: {}",
-                e
-            ));
-        }
-    };
-
     // Convert from db::Recipe to BasicRecipe and return.
-    RecipeResponse::Recipe(Recipe::from_recipe(&recipe, &mut weekly_cacher_lock, &client).await)
+    RecipeResponse::Recipe(Recipe::from_recipe(&recipe, &weekly_cacher).await)
 }

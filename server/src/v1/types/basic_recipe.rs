@@ -1,7 +1,6 @@
 use crate::v1::types::database::Recipe;
 use crate::v1::types::*;
 use crate::WeeklyRecipeGetter;
-use mongodb::Client;
 
 /// A recipe that contains less information than a standard `Recipe` or
 /// a database Recipe. This is used to reduce the amount of data that is
@@ -35,17 +34,13 @@ pub struct BasicRecipe {
 
 impl BasicRecipe {
     /// Creates a new `BasicRecipe` from a [`database::Recipe`].
-    pub async fn from_recipe(
-        recipe: &Recipe,
-        weekly_getter: &mut WeeklyRecipeGetter,
-        db_client: &Client,
-    ) -> Self {
+    pub async fn from_recipe(recipe: &Recipe, weekly_getter: &WeeklyRecipeGetter) -> Self {
         BasicRecipe {
             uuid: recipe.uuid,
             // Return the date it became public instead of the date it
             // was added to the database
             date_added: recipe.becomes_public,
-            is_weekly: recipe.is_weekly(weekly_getter, db_client).await,
+            is_weekly: recipe.is_weekly(weekly_getter).await,
             short: recipe.short.clone(),
             title: recipe.title.clone(),
             // Convert Nutrient to SerdeStringNutrient so when sent to the
