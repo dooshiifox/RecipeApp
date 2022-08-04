@@ -79,6 +79,8 @@
 		// The progress bar is already animated using CSS
 		//		`transition-[width]`   and   `transition-duration: {progressBarAnimationSpeed}ms`
 		// This will provide a smoother animation than setting the width each frame.
+		// Because it animates at `progressBarAnimationSpeed`ms, we use this
+		// for the duration of the JS animations below.
 		percent = Math.min(toXp / nextXp, 1);
 
 		await EASING.animate(currentXp, toXp, progressBarAnimationSpeed, EASING.sineOut, (xp) => {

@@ -23,6 +23,7 @@
 			}
 		);
 
+		// Getting the recipe went horribly wrong somehow.
 		if (recipe === undefined)
 			// Returns an APIErrorResponse
 			return {
@@ -34,6 +35,7 @@
 				}
 			};
 
+		// Server returned an APIErrorResponse
 		if ('message' in recipe) {
 			// Returns an APIErrorResponse
 			return {
@@ -46,6 +48,7 @@
 			};
 		}
 
+		// Server returned a success.
 		// Returns an APISuccessResponse<Recipe>
 		return {
 			props: {
