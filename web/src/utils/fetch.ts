@@ -70,10 +70,10 @@ export enum ReqMethod {
  * a generic API response type.
  *
  * Resolves with the response if the server returns a VALID API RESPONSE.
- * The caller must check themselves if the response is a success or error\
+ * The caller must check themselves if the response is a success or error
  * using the `success` property.
  *
- * Resolves: `APIResponse<T>`
+ * Resolves: `APIResponse<T>` \
  * Rejects: `APIErrorResponse`
  */
 export async function req<T>(

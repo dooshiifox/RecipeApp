@@ -13,21 +13,32 @@ declare type Invalidator<T> = (value?: T) => void;
 
 type JsonParseable = string;
 
+/** An implementation of the `writable` from Svelte. */
 export interface LsWritable<T> {
+	/** Subscribe to the `writable` to run a function on change. */
 	subscribe(
 		this: void,
 		run: Subscriber<T | null>,
 		invalidate?: Invalidator<T | null>
 	): Unsubscriber;
+	/** Set the value of the `writable` */
 	set(this: void, value: T): void;
+	/** Update the value of the `writable` with a callback, the param passed
+	 * into the callback being the current value of the function.
+	 */
 	update(this: void, updater: Updater<T | null>): void;
+	/** Get the current value inside the `writable`. */
 	get(): T | null;
 }
 
 export function lsWritable<T>(w: Writable<JsonParseable>): LsWritable<T> {
+	// Extract the subscribe and set variables from the "internal" writable.
 	const { subscribe, set } = w;
 
+	// Returns the value of the writable.
 	const get = () => {
+		// Subscribe to the internal writable to get the value, save it,
+		// and unsubscribe immediately.
 		let value = null;
 		const unsub = w.subscribe((v) => {
 			if (v !== null) value = JSON.parse(v);
@@ -38,6 +49,8 @@ export function lsWritable<T>(w: Writable<JsonParseable>): LsWritable<T> {
 
 	return {
 		subscribe(value: Subscriber<T | null>, invalidate?: Invalidator<T | null>) {
+			// Subscribe to the "internal" writable, calling the
+			// `value` and `invalidate` functions with the parsed JSON value.
 			const unsub = subscribe(
 				(v) => {
 					if (v !== null) value(JSON.parse(v));
@@ -53,11 +66,13 @@ export function lsWritable<T>(w: Writable<JsonParseable>): LsWritable<T> {
 			return unsub;
 		},
 		set(value: T) {
+			// Parse as a string before saving to the "internal" writable.
 			const save = JSON.stringify(value);
 
 			return set(save);
 		},
 		update(updater: Updater<T | null>) {
+			// Update the "internal" writable with the updater function.
 			const value = get();
 			const save = JSON.stringify(updater(value));
 

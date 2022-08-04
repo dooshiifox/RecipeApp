@@ -5,7 +5,6 @@ use actix_web::{web, App as ActixApp, HttpServer};
 use clap::{App as ClapApp, Arg};
 use mongodb::bson::doc;
 use std::sync::Arc;
-use std::sync::RwLock;
 
 mod macros;
 mod v1;

@@ -136,6 +136,11 @@ export async function animate(
 /** Useful easing types with code provided by https://easings.net/#
  * Calling one of these functions with the progress in time (between 0 and 1)
  * will return a completion percentage (between 0 and 1)
+ *
+ * Also provides the `lerp` and `animate` functions, which are useful for
+ * easing between two values. While Svelte provides transitions, these are
+ * useful for some edge cases. One example of this (2022/8/3) is in
+ * `lib/homepage/Level.svelte`, where its used to animate the experience gained.
  */
 export default {
 	lerp,
