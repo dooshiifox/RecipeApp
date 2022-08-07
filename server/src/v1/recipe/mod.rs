@@ -80,11 +80,12 @@ impl RequestRecipe {
         if_some!(authors, set_authors);
         if_some!(credits, credits);
         if_some!(weekly_timestamp, weekly_timestamp);
-        if_some!(title, title);
         if_some!(short, short);
+        if_some!(title, title);
         if_some!(time_to_cook, time_to_cook);
         if_some!(servings, servings);
         if_some!(image, image);
+        if_some!(gradient, gradient);
         if_some!(ingredients, ingredients);
         if_some!(method, method);
         if_some!(quiz, quiz);
@@ -102,90 +103,3 @@ impl RequestRecipe {
         builder.build()
     }
 }
-
-// #[derive(Debug, serde::Serialize, serde::Deserialize, Clone, PartialEq, Eq)]
-// #[serde(rename_all = "camelCase")]
-// pub struct RequestMethod {
-//     /// The steps of the recipe
-//     steps: Option<Vec<RequestStep>>,
-// }
-
-// impl RequestMethod {
-//     /// Tries to convert a RequestMethod into a [`Method`].
-//     pub fn into_method(self) -> Result<database::Method, String> {
-//         let method = database::Method::new();
-
-//         if let Some(steps) = self.steps {
-//             for step in steps {
-//                 method = method.add_step(step.into_step()?);
-//             }
-//         } else {
-//             return Err("No steps provided to method.".to_string());
-//         }
-
-//         Ok(method)
-//     }
-// }
-
-// #[derive(Debug, serde::Serialize, serde::Deserialize, Clone, PartialEq, Eq)]
-// #[serde(rename_all = "camelCase")]
-// pub struct RequestStep {
-//     /// The title of the step.
-//     title: Option<String>,
-//     /// Each of the substeps in the step
-//     substeps: Option<Vec<RequestSubStep>>,
-// }
-
-// impl RequestStep {
-//     /// Tries to convert a RequestStep into a [`Step`].
-//     pub fn into_step(self) -> Result<database::Step, String> {
-//         let title = self
-//             .title
-//             .ok_or_else(|| "No title provided to step.".to_string())?;
-
-//         let mut step = database::Step::new(title);
-
-//         if let Some(substeps) = self.substeps {
-//             for substep in substeps {
-//                 step = step.add_substep(substep.into_substep()?);
-//             }
-//         } else {
-//             return Err("No substeps provided to step.".to_string());
-//         }
-
-//         Ok(step)
-//     }
-// }
-
-// pub struct RequestSubStep {
-//     /// The content of the substep.
-//     content: Option<Formattable>,
-//     /// An accompanying image to the substep
-//     image: Option<Url>,
-//     /// Any warning present with this substep
-//     warnings: Option<Vec<Warning>>,
-//     /// Any information present with this substep
-//     infos: Option<Vec<Info>>,
-// }
-
-// impl RequestSubStep {
-//     /// Tries to convert a RequestSubStep into a [`SubStep`].
-//     pub fn into_substep(self) -> Result<database::SubStep, String> {
-//         let mut builder = database::SubStep::builder();
-
-//         if let Some(content) = self.content {
-//             builder = builder.content(content);
-//         }
-//         if let Some(image) = self.image {
-//             builder = builder.image(image);
-//         }
-//         if let Some(warnings) = self.warnings {
-//             builder = builder.warnings(warnings);
-//         }
-//         if let Some(infos) = self.infos {
-//             builder = builder.infos(infos);
-//         }
-
-//         builder.build()
-//     }
-// }
