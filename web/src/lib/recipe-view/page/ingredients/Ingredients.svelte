@@ -20,7 +20,7 @@
 			<Checkbox
 				class="w-9 h-9 p-1 cursor-pointer hover:bg-black/10 [.active&]:fill-green-600 [.inactive&]:fill-black transition-[background-color] duration-75 rounded-lg"
 			/>
-			<span class="text-2xl italic leading-5">{ingredient}</span>
+			<span class="text-2xl italic leading-7">{ingredient}</span>
 			<Basket
 				class="w-9 h-9 p-1 cursor-pointer hover:bg-black/10 fill-black transition-[background-color] duration-75 rounded-lg"
 			/>

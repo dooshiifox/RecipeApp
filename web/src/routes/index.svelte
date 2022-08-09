@@ -67,7 +67,7 @@
 		if (e.detail.query.length !== 0) {
 			reqBody['query'] = e.detail.query;
 		}
-		reqBody['resultsPerPage'] = e.detail.resultsPerPage;
+		reqBody['pageLimit'] = e.detail.resultsPerPage;
 
 		// Send the request.
 		const localSearchResults = await post<BasicRecipeConstructorUuid[]>(

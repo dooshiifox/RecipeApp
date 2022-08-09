@@ -13,7 +13,7 @@
 <div class="relative rounded-3xl">
 	<GradientBackground
 		{gradient}
-		class="absolute inset-0 saturate-[0.3] brightness-[1.15] rounded-3xl -z-10"
+		class="absolute inset-0 saturate-[0.6] brightness-[1.15] rounded-3xl -z-10"
 	/>
 	<div class="flex flex-col">
 		{#each Array(step.substeps.length) as _, i}

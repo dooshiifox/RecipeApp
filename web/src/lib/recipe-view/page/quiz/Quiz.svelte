@@ -26,13 +26,18 @@
 	}
 
 	// An array of questions in order.
-	// Shuffles the given questions so theyre not in order and it feels
-	// more random.
-	let questions: { question: Question; state: AnswerState }[] = _.shuffle(
-		recipe.quiz.questions
-	).map((question) => {
-		return { question, state: AnswerState.Unanswered };
-	});
+	// Used to be shuffled but then questions could not rely on the answer
+	// to previous questions.
+	// e.g., "What is found in pumpkins?" : Vitamin A
+	//       "What is Vitamin A good for?" : Eyesight and immune system
+	// If this was shuffled, then if the first question was
+	// "What is Vitamin A good for?" and the second "What is found in pumpkins?",
+	// it'd be pretty easy to guess!
+	let questions: { question: Question; state: AnswerState }[] = recipe.quiz.questions.map(
+		(question) => {
+			return { question, state: AnswerState.Unanswered };
+		}
+	);
 
 	let qIndex = 0;
 	let question = questions[qIndex].question;
